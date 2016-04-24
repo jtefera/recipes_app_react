@@ -1,0 +1,25 @@
+{
+  "name": "recipe_app_react",
+  "version": "1.0.0",
+  "description": "Recipe Cookbook web app done with React JS and Node.js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jtefera/recipes_app_react.git"
+  },
+  "keywords": [
+    "React",
+    "recipe",
+    "cookbook",
+    "node"
+  ],
+  "author": "Jonathan Tefera Endale",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jtefera/recipes_app_react/issues"
+  },
+  "homepage": "https://github.com/jtefera/recipes_app_react#readme"
+}
