@@ -4,7 +4,7 @@
   "description": "Recipe Cookbook web app done with React JS and Node.js",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "webpack-dev-server"
   },
   "repository": {
     "type": "git",
@@ -21,5 +21,20 @@
   "bugs": {
     "url": "https://github.com/jtefera/recipes_app_react/issues"
   },
-  "homepage": "https://github.com/jtefera/recipes_app_react#readme"
+  "homepage": "https://github.com/jtefera/recipes_app_react#readme",
+  "dependencies": {
+    "babel": "^6.5.2",
+    "babel-core": "^6.7.7",
+    "babel-loader": "^6.2.4",
+    "babel-preset-es2015": "^6.6.0",
+    "babel-preset-react": "^6.5.0",
+    "react": "^15.0.1",
+    "react-dom": "^15.0.1",
+    "webpack": "^1.13.0",
+    "webpack-dev-server": "^1.14.1"
+  },
+  "devDependencies": {
+    "babel-preset-es2015": "^6.6.0",
+    "babel-preset-react": "^6.5.0"
+  }
 }
