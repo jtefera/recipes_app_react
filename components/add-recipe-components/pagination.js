@@ -18,19 +18,19 @@ class Pagination extends React.Component {
 			return (
 				<div class="Pagination">
 					<hr />
-					<div class="btn-group btn-group-lg">
+					<div className="btn-group btn-group-lg">
 						<button 
 							id="previousBut" 
 							type="button"
 							onClick={this.prevPageHandler.bind(this)}
-							className="btn btn-warning btn-lg">
+							className="btn btn-warning">
 								Previous
 						</button>
 						<button 
 							id="nextBut" 
 							type="button"
 							onClick={this.nextPageHandler.bind(this)}
-							className="btn btn-success btn-lg"
+							className="btn btn-success"
 							>
 								Next
 						</button>

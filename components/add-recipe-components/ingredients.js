@@ -32,6 +32,7 @@ class AddIngredientForm extends React.Component {
 	render() {
 		return (
 			<form role="form">
+				<h3> Add an ingredient</h3>
 				<div className="form-group">
 					<label for="ingredientName">Name of the ingredient:</label>
 					<input
@@ -64,21 +65,170 @@ class AddIngredientForm extends React.Component {
 		);
 	}
 }
+
+class ModifyIngredientForm extends React.Component{
+	/*
+		Props:
+			ingredientPos={index}
+			modifyIngredientHandler={this.props.modifyIngredientHandler}
+			changeModifyingState={this.modifyingIngredient.bind(this)}
+			ingredient={ingredient}
+
+	*/
+	constructor(props) {
+		super(props);
+		this.state = {
+			name: this.props.ingredient.name,
+			quantity: this.props.ingredient.quantity
+		};
+	}
+	updateInputs() {
+		let ingredientName = ReactDOM.findDOMNode(this.refs.name).value,
+			ingredientQuantity = ReactDOM.findDOMNode(this.refs.quantity).value;
+
+		this.setState({
+			name: ingredientName,
+			quantity: ingredientQuantity
+		});
+
+	}
+	saveModifications(e){
+		e.preventDefault();
+		let ingredientKey = this.props.ingredientPos,
+			modifiedIngredient = {
+			name: this.state.name,
+			quantity: this.state.quantity
+		};
+		this.props.modifyIngredientHandler(ingredientKey, modifiedIngredient);
+		this.props.changeModifyingState(false);
+	}
+	cancelModifications(e){
+		e.preventDefault();
+		this.props.changeModifyingState(false);
+	}
+	render() {
+		let ingredient = this.props.ingredient;
+		return (
+			<form role="form">
+				<hr />
+				<input 
+					ref="quantity"
+					type="text"
+					placeholder={ingredient.quantity}
+					value={this.state.quantity}
+					onChange={this.updateInputs.bind(this)}
+				/> of
+				<input 
+					ref="name"
+					type="text"
+					placeholder={ingredient.name}
+					value={this.state.name}
+					onChange={this.updateInputs.bind(this)}
+				/>
+				<div className="btn-group">
+					<button 
+						className="btn btn-success"
+						onClick={this.saveModifications.bind(this)}
+						>
+							Save
+					</button>
+					<button 
+						className="btn btn-warning"
+						onClick={this.cancelModifications.bind(this)}
+						>
+							Cancel
+					</button>
+				</div>
+				<hr />
+			</form>
+		);
+	}
+}
+
+class ModifyIngredientBtns extends React.Component {
+	deleteIngredient() {
+		this.props.modifyIngredientHandler(this.props.ingredientPos);
+	}
+	modifyIngredient() {
+		let ingredientPos = this.props.ingredientPos;
+		this.props.changeModifyingState(true, ingredientPos);
+	}
+	render() {
+		return(
+			<div className="btn-group btn-group-xs">
+				<button 
+					className="btn btn-default"
+					onClick={this.modifyIngredient.bind(this)}
+					>Modify</button>
+				<button 
+					className="btn btn-danger" 
+					onClick={this.deleteIngredient.bind(this)}>
+					Delete</button>
+			</div>
+		);
+
+	}
+}
 class IngredientsList extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			modifyingIngredient: false,
+			ingredientBeingModified: -1
+		};
+	}
+	modifyingIngredient(isModifying, keyIngredient){
+		if(isModifying){
+			this.setState({
+				modifyingIngredient: true,
+				ingredientBeingModified: keyIngredient
+			});
+		} else {
+			this.setState({
+				modifyingIngredient: false,
+				ingredientBeingModified: -1
+			});
+		}
+	}
+
 	render() {
 		if(this.props.ingredientList.length){
+			console.log(this.props.ingredientList);
 			let ingredientRows = this.props.ingredientList.map( (ingredient, index) => {
-				return (
-					<tr key={index}>
-						<td>
-							{index + 1} - {ingredient.quantity} 
-							{ingredient.measurmentUnit} of {ingredient.name}
-						</td>
-					</tr>
-				);
+				let modifyingIngredient = this.state.modifyingIngredient,
+					ingredientBeingModified = this.state.ingredientBeingModified;
+				console.log(modifyingIngredient, ingredientBeingModified, index )
+				if(!modifyingIngredient || ingredientBeingModified !== index){
+					//In case we are not modifying anything or the ingredient being
+					//modified is not this one
+					return (
+						<tr key={index}>
+							<td>
+								{ingredient.quantity} of {ingredient.name}
+								<ModifyIngredientBtns 
+									ingredientPos={index} 
+									modifyIngredientHandler={this.props.modifyIngredientHandler}
+									changeModifyingState={this.modifyingIngredient.bind(this)}
+								/>
+							</td>
+						</tr>
+					);
+				} else {
+					//We are modifiying and it is this ingredient
+					return (
+						<ModifyIngredientForm 
+							ingredientPos={index}
+							modifyIngredientHandler={this.props.modifyIngredientHandler}
+							changeModifyingState={this.modifyingIngredient.bind(this)}
+							ingredient={ingredient}
+							key={index}
+						/>
+					);
+				}
 			})
 			return (
 				<div className="ingredientNameDiv">
+					<h3>List of ingredients added:</h3>
 					<table className="ingredientNameDiv">
 						<tbody>
 							{ingredientRows}
@@ -108,7 +258,7 @@ class Ingredients extends React.Component {
 		super(props);
 		this.update = this.update.bind(this);
 		this.state = {
-			ingredients: this.props.recipe.ingredients || []
+			ingredients: this.props.ingredients || []
 		}
 	} 
 
@@ -136,8 +286,10 @@ class Ingredients extends React.Component {
 	render() {
 		return (
 			<div class="recipe-ingredients form slide">
-				<IngredientsList ingredientList={this.props.recipe.ingredients}/>
-				<hr /	>
+				<IngredientsList 
+					ingredientList={this.props.ingredients} 
+					modifyIngredientHandler={this.props.modifyIngredientHandler}/>
+				<hr />
 				<AddIngredientForm addIngredient={this.addIngredientHandler.bind(this)}/>
 			</div>
 		)

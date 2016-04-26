@@ -6,11 +6,15 @@
 	
 	<!-- Bootstrap + jQuery -->
 	<script   src="https://code.jquery.com/jquery-1.12.3.min.js"   integrity="sha256-aaODHAgvwQW1bFOGXMeX+pC4PZIPsvn2h1sArYOhgXQ="   crossorigin="anonymous"></script>
+	<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 	<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 	<style >
 		#app {
 			text-align: center;		
+		}
+		#app table{
+			width: 100%;
 		}
 		#content {
 			width: 400px;
@@ -23,10 +27,33 @@
 			width: 100%;
 			font-size: 25px;
 		}
+		.stepsList {
+			text-align: center;
+		}
+		.stepsList table{
+			font-size: 25px;
+		}
 		.Pagination button{
 			margin: 5px 20px;
 		}
+		.stepsList li {
+			display: block;
+			list-style: none;
+		}
+		.sortHandle {
+			display: inline-block;
+
+		}
 	</style>
+
+	<script>
+		$(function() {
+			$( "#sortable" ).sortable({
+				handle: ".sortHandle",
+				cancel: ""
+			});
+		});
+  	</script>
 
 
 </head>

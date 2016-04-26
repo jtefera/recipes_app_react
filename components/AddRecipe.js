@@ -5,10 +5,11 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 
 import Welcome from './add-recipe-components/welcome'
-import RecipeName from './add-recipe-components/recipe-name'
+import BasicInfo from './add-recipe-components/basic-info'
 import Ingredients from './add-recipe-components/ingredients'
 import Steps from './add-recipe-components/steps'
 import Pagination from './add-recipe-components/pagination'
+import Review from './add-recipe-components/review'
 
 /*
 	App
@@ -32,28 +33,29 @@ class Page extends React.Component {
 				);
 			case 2:
 				return (
-					<RecipeName 
-						recipe={this.props.recipe} 
+					<BasicInfo 
+						basicInfo={this.props.recipe.basicInfo} 
 						updaterProp={this.props.updaterProp}
 					/>
 				);
 			case 3:
 				return (
 					<Ingredients 
-						recipe={this.props.recipe} 
+						ingredients={this.props.recipe.ingredients} 
 						updaterProp={this.props.updaterProp}
+						modifyIngredientHandler={this.props.modifyIngredientHandler}
 					/>
 				);
 			case 4:
 				return (
 					<Steps 
-						recipe={this.props.recipe} 
+						steps={this.props.recipe.steps} 
 						updaterProp={this.props.updaterProp}
 					/>
 				);
 			default:
 				return (
-					<div> Nada de nada </div>
+					<Review recipe={this.props.recipe} />
 				);
 		}
 	}
@@ -64,11 +66,30 @@ class AddRecipe extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			step: 3,
+			step: 4,
 			recipe: {
-				name: "Pasta alla Carbonara",
-				ingredients: [],
-				steps: [{text: "test 1 2 3"}]
+				basicInfo: {
+					name: "Pasta alla Carbonara",
+					duration: 40,
+					difficulty: 3,
+					numPlates: 3
+				},
+				ingredients: [
+					{
+						name: "Tomate",
+						quantity: "2kg"
+					},
+					{
+						name: "Pasta",
+						quantity: "500gr"
+					}
+				],
+				steps: [
+					{text: "Chop the onions"},
+					{text: "Heat the oil"},
+					{text: "Fry the onions"},
+					{text: "Add the tomatoes"}
+				]
 			}
 		}
 	}
@@ -80,9 +101,23 @@ class AddRecipe extends React.Component {
 	changePropRecipeHandler(obj) {
 		var newRecipe = this.state.recipe;
 		newRecipe[obj.name] = obj.value;
+		console.log(newRecipe);
 		this.setState({
 			recipe: newRecipe
 		})
+	}
+	modifyIngredientHandler(key, newValue) {
+		let recipe = this.state.recipe;
+		if(newValue === undefined){
+			//Delete ingredient
+			recipe.ingredients.splice(key, 1);
+		} else {
+			//Modify ingredient
+			recipe.ingredients[key] = newValue;
+		}
+		this.setState({
+			'recipe': recipe
+		});
 	}
 	render() {
 		return (
@@ -91,6 +126,7 @@ class AddRecipe extends React.Component {
 					step={this.state.step} 
 					recipe={this.state.recipe} 
 					updaterProp={this.changePropRecipeHandler.bind(this)}
+					modifyIngredientHandler={this.modifyIngredientHandler.bind(this)}
 				/>
 				<Pagination 
 					step={this.state.step} 

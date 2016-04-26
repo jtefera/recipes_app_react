@@ -1,7 +1,7 @@
 import React from 'react' 
 import ReactDOM from 'react-dom'
 
-class RecipeName extends React.Component {
+class BasicInfo extends React.Component {
 	constructor(props){
 		super(props);
 		this.state = {
@@ -20,7 +20,7 @@ class RecipeName extends React.Component {
 	}
 	render() {
 		return (
-			<div class="recipe-name form slide">
+			<div class="BasicInfo form slide">
 				Receipe Name: 
 				<form>
 					<input 
@@ -35,4 +35,4 @@ class RecipeName extends React.Component {
 	}
 }
 
-export default RecipeName
+export default BasicInfo
