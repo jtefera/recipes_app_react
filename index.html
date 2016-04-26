@@ -37,28 +37,24 @@
 			margin: 5px 20px;
 		}
 		.stepsList li {
-			display: block;
+			list-style: none;
+			text-align: left;
+    		height: 25px;
+		}
+		li {
 			list-style: none;
 		}
 		.sortHandle {
 			display: inline-block;
 
 		}
+		.stepAllBtns {
+			float: right;
+		}
 	</style>
-
-	<script>
-		$(function() {
-			$( "#sortable" ).sortable({
-				handle: ".sortHandle",
-				cancel: ""
-			});
-		});
-  	</script>
-
-
 </head>
 <body>
-	<div id="content" class="container-fixed" >
+	<div id="content" class="container-fixed" >	
 		<div class="panel panel-default">
 			<div id="app" class="panel-body"></div>
 		</div>	

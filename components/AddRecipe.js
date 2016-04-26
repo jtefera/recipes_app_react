@@ -13,12 +13,30 @@ import Review from './add-recipe-components/review'
 
 /*
 	App
-		Menu Bar
-			Add Recipe
-				Page
-				Pagination
-			Recipes
-			Search recipes
+		Add Recipe
+			Page
+				switch(step){//Depending on the step
+					0: Welcome //Introductory test to start
+					1: BasicInfo //Sets:
+						Name
+						Difficulty of the recipe
+						Duration
+						Num of plates
+					2: Ingredients
+						IngredientsList
+							Ingredient
+								IngredientQuantity
+								IngredientName
+								Btns
+									ModifyBtn
+									DeleteBtn
+						AddIngredientForm
+
+
+
+				}
+			Pagination
+				//Contains the previous and the next buttons
 */
 
 var numSteps = 5;
@@ -51,6 +69,7 @@ class Page extends React.Component {
 					<Steps 
 						steps={this.props.recipe.steps} 
 						updaterProp={this.props.updaterProp}
+						modifyStepHandler={this.props.modifyStepHandler}
 					/>
 				);
 			default:
@@ -66,7 +85,7 @@ class AddRecipe extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			step: 4,
+			step: 3,
 			recipe: {
 				basicInfo: {
 					name: "Pasta alla Carbonara",
@@ -119,6 +138,19 @@ class AddRecipe extends React.Component {
 			'recipe': recipe
 		});
 	}
+	modifyStepHandler(key, newValue) {
+		let recipe = this.state.recipe;
+		if(newValue === undefined){
+			//Delete ingredient
+			recipe.steps.splice(key, 1);
+		} else {
+			//Modify ingredient
+			recipe.steps[key] = newValue;
+		}
+		this.setState({
+			'recipe': recipe
+		});
+	}
 	render() {
 		return (
 			<div>
@@ -127,6 +159,7 @@ class AddRecipe extends React.Component {
 					recipe={this.state.recipe} 
 					updaterProp={this.changePropRecipeHandler.bind(this)}
 					modifyIngredientHandler={this.modifyIngredientHandler.bind(this)}
+					modifyStepHandler={this.modifyStepHandler.bind(this)}
 				/>
 				<Pagination 
 					step={this.state.step} 
