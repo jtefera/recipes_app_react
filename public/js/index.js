@@ -20215,7 +20215,7 @@
 			var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(AddRecipe).call(this, props));
 
 			_this2.state = {
-				step: 3,
+				step: 5,
 				recipe: {
 					basicInfo: {
 						name: "Pasta alla Carbonara",
@@ -21917,8 +21917,48 @@
 		return ShowSteps;
 	}(_react2.default.Component);
 
-	var Review = function (_React$Component4) {
-		_inherits(Review, _React$Component4);
+	var SaveBtn = function (_React$Component4) {
+		_inherits(SaveBtn, _React$Component4);
+
+		function SaveBtn(props) {
+			_classCallCheck(this, SaveBtn);
+
+			return _possibleConstructorReturn(this, Object.getPrototypeOf(SaveBtn).call(this, props));
+		}
+
+		_createClass(SaveBtn, [{
+			key: "saveRecipe",
+			value: function saveRecipe() {
+				var recipe = this.props.recipe;
+				$.ajax({
+					url: 'json/recipe_library.json',
+					method: 'POST',
+					dataType: 'json',
+					data: recipe,
+					success: function success() {
+						console.log("Archivo Subido!");
+					}
+				});
+			}
+		}, {
+			key: "render",
+			value: function render() {
+				return _react2.default.createElement(
+					"button",
+					{
+						className: "saveRecipeBtn btn btn-info",
+						onClick: this.saveRecipe.bind(this)
+					},
+					"Save recipes!"
+				);
+			}
+		}]);
+
+		return SaveBtn;
+	}(_react2.default.Component);
+
+	var Review = function (_React$Component5) {
+		_inherits(Review, _React$Component5);
 
 		function Review() {
 			_classCallCheck(this, Review);
@@ -21936,7 +21976,9 @@
 					_react2.default.createElement("hr", null),
 					_react2.default.createElement(ShowIngredients, { ingredients: this.props.recipe.ingredients }),
 					_react2.default.createElement("hr", null),
-					_react2.default.createElement(ShowSteps, { steps: this.props.recipe.steps })
+					_react2.default.createElement(ShowSteps, { steps: this.props.recipe.steps }),
+					_react2.default.createElement("hr", null),
+					_react2.default.createElement(SaveBtn, { recipe: this.props.recipe })
 				);
 			}
 		}]);

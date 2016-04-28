@@ -1,0 +1,66 @@
+[
+    {
+        "basicInfo": {
+            "name": "Pasta alla Carbonara",
+            "duration": "40",
+            "difficulty": "3",
+            "numPlates": "3"
+        },
+        "ingredients": [
+            {
+                "name": "Tomate",
+                "quantity": "2kg"
+            },
+            {
+                "name": "Pasta",
+                "quantity": "500gr"
+            }
+        ],
+        "steps": [
+            {
+                "text": "Chop the onions"
+            },
+            {
+                "text": "Heat the oil"
+            },
+            {
+                "text": "Fry the onions"
+            },
+            {
+                "text": "Add the tomatoes"
+            }
+        ]
+    },
+    {
+        "basicInfo": {
+            "name": "Pasta alla Carbonara",
+            "duration": "40",
+            "difficulty": "3",
+            "numPlates": "3"
+        },
+        "ingredients": [
+            {
+                "name": "Tomate",
+                "quantity": "2kg"
+            },
+            {
+                "name": "Pasta",
+                "quantity": "500gr"
+            }
+        ],
+        "steps": [
+            {
+                "text": "Chop the onions"
+            },
+            {
+                "text": "Heat the oil"
+            },
+            {
+                "text": "Fry the onions"
+            },
+            {
+                "text": "Add the tomatoes"
+            }
+        ]
+    }
+]

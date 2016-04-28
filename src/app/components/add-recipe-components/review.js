@@ -58,7 +58,7 @@ class ShowSteps extends React.Component {
 		});
 		return (
 			<div className="showSteps">
-				<h3> Steps </h3>	
+				<h3> Steps </h3>
 				<table>
 					<tbody>
 						{stepsRows}
@@ -69,6 +69,35 @@ class ShowSteps extends React.Component {
 	}
 }
 
+class SaveBtn extends React.Component {
+	constructor(props) {
+		super(props);
+	}
+
+	saveRecipe() {
+		let recipe = this.props.recipe;
+		$.ajax({
+			url: 'json/recipe_library.json',
+			method: 'POST',
+			dataType: 'json',
+			data: recipe,
+			success: () => {
+				console.log("Archivo Subido!");
+			}
+		})
+	}
+
+	render() {
+		return (
+			<button
+				className="saveRecipeBtn btn btn-info"
+				onClick={this.saveRecipe.bind(this)}
+			>
+				Save recipes!
+			</button>
+		)
+	}
+}
 
 export default class Review extends React.Component {
 	render() {
@@ -79,6 +108,8 @@ export default class Review extends React.Component {
 				<ShowIngredients ingredients={this.props.recipe.ingredients} />
 				<hr />
 				<ShowSteps steps={this.props.recipe.steps} />
+				<hr />
+				<SaveBtn recipe={this.props.recipe}/>
 			</div>
 		);
 	}

@@ -25,18 +25,22 @@ import webpack from 'gulp-webpack'
 
 //Important paths that wit will be used
 const paths = {
-  //Points to the pre-compiled es2015 js files that will be translaped
-  srcjs: ['./src/**/*/*.js'],
+  //Points to the pre-compiled es2015 server js files that will be translaped
+  serversrcjs: ['./src/server/server.js'],
   //Points where the translapped server file will be hosted
   destination: './server',
+  //Points to the the pre-translaped es2015 js files of the React
+  //app are hosted
+  appsrcjs: './src/app/**/*/*.js',
   //Poitns to the file that contains the app bundle parts to be translapped
-  appJsSrc: './src/app/main.js',
+  appMainJsSrc: './src/app/main.js',
   //Points to the folder where the translapped files will be hosted
-  apiDest: './public/js'
+  appDest: './public/js'
 }
 
 //Task that will be run when we command gulp on the terminal
 gulp.task('default', cb => {
+  process.stdout.write('Gulp! Gulp! \n')
   //Creates a sequence of tasks that are to be called. One after the other
   run('server', 'build', 'watch', cb);
 });
@@ -84,7 +88,7 @@ gulp.task('babel', shell.task([
 //index.js is the file than the html will call when it calls our script!
 gulp.task('webpack', () => {
   //We create a stream where main.js is the entry point
-  return gulp.src(paths.appJsSrc)
+  return gulp.src(paths.appMainJsSrc)
           //we pipe that stream into webpack that will do the piping
           .pipe(webpack({
             output: {
@@ -114,8 +118,20 @@ gulp.task('restart', () => {
   express.start.bind(express)();
 });
 
+gulp.task("justwatching", () => {
+  process.stdout.write('I am watching you! \n')
+});
+
+gulp.task('watchServer', () => {
+  process.stdout.write('watch mee server server \n')
+  gulp.watch(paths.serversrcjs , (cb) => run('clean', 'babel', 'restart'));
+});
+
+gulp.task('watchApp', () => {
+  process.stdout.write('watch mee app app \n')
+  gulp.watch(paths.appsrcjs, ['webpack']);
+});
+
 //We set a watcher that we watch to changes into the paths.srcjs files.
 //If there are, it calls the build task
-gulp.task('watch', () => {
-  gulp.watch(paths.srcjs , ['build']);
-})
+gulp.task('watch', ['watchApp', 'watchServer']);

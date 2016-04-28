@@ -1,7 +1,7 @@
 //Main component of the  recipeApp
 // import is the new way of doing require('react')
 //This will do with the creation of a new recipe
-import React from 'react' 
+import React from 'react'
 import ReactDOM from 'react-dom'
 
 import Welcome from './add-recipe-components/welcome'
@@ -51,23 +51,23 @@ class Page extends React.Component {
 				);
 			case 2:
 				return (
-					<BasicInfo 
-						basicInfo={this.props.recipe.basicInfo} 
+					<BasicInfo
+						basicInfo={this.props.recipe.basicInfo}
 						updaterProp={this.props.updaterProp}
 					/>
 				);
 			case 3:
 				return (
-					<Ingredients 
-						ingredients={this.props.recipe.ingredients} 
+					<Ingredients
+						ingredients={this.props.recipe.ingredients}
 						updaterProp={this.props.updaterProp}
 						modifyIngredientHandler={this.props.modifyIngredientHandler}
 					/>
 				);
 			case 4:
 				return (
-					<Steps 
-						steps={this.props.recipe.steps} 
+					<Steps
+						steps={this.props.recipe.steps}
 						updaterProp={this.props.updaterProp}
 						modifyStepHandler={this.props.modifyStepHandler}
 					/>
@@ -85,7 +85,7 @@ class AddRecipe extends React.Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			step: 3,
+			step: 5,
 			recipe: {
 				basicInfo: {
 					name: "Pasta alla Carbonara",
@@ -154,15 +154,15 @@ class AddRecipe extends React.Component {
 	render() {
 		return (
 			<div>
-				<Page 
-					step={this.state.step} 
-					recipe={this.state.recipe} 
+				<Page
+					step={this.state.step}
+					recipe={this.state.recipe}
 					updaterProp={this.changePropRecipeHandler.bind(this)}
 					modifyIngredientHandler={this.modifyIngredientHandler.bind(this)}
 					modifyStepHandler={this.modifyStepHandler.bind(this)}
 				/>
-				<Pagination 
-					step={this.state.step} 
+				<Pagination
+					step={this.state.step}
 					changePage={this.changePageHandler.bind(this)}
 				/>
 			</div>
