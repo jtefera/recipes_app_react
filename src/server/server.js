@@ -1,7 +1,7 @@
 
-var http = require("http");
-var express = require("express");
-var babel = require("babel-middleware");
+import http from "http";
+import express from "express";
+import babel from "babel-middleware";
 //var routes = require("routes");
 
 //Server
@@ -27,5 +27,8 @@ app.get("/", function(req, res){
 	res.send("Hola mundo!");
 });
 
-console.log("Server!");
-app.listen(3000);
+app.listen(3000, () => {
+	console.log("----------------------------");
+	console.log("Server started on ports 3000!");
+	console.log("----------------------------");
+});

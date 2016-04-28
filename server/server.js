@@ -1,15 +1,26 @@
 "use strict";
 
-var http = require("http");
-var express = require("express");
-var babel = require("babel-middleware");
+var _http = require("http");
+
+var _http2 = _interopRequireDefault(_http);
+
+var _express = require("express");
+
+var _express2 = _interopRequireDefault(_express);
+
+var _babelMiddleware = require("babel-middleware");
+
+var _babelMiddleware2 = _interopRequireDefault(_babelMiddleware);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 //var routes = require("routes");
 
 //Server
-var app = express();
+var app = (0, _express2.default)();
 
 //Static pages
-app.use(express.static('public'));
+app.use(_express2.default.static('public'));
 
 app.use(function (req, res) {
 	res.write("esto es la caña!");
@@ -28,5 +39,8 @@ app.get("/", function (req, res) {
 	res.send("Hola mundo!");
 });
 
-console.log("Server!");
-app.listen(3000);
+app.listen(3000, function () {
+	console.log("----------------------------");
+	console.log("Server started on portss En serio! 3000!");
+	console.log("----------------------------");
+});
