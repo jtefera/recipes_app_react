@@ -25,8 +25,8 @@ import webpack from 'gulp-webpack'
 
 //Important paths that wit will be used
 const paths = {
-  //Points to the server es2015 files that will be translaped
-  serversrcjs: ['./src/**/*/js'],
+  //Points to the pre-compiled es2015 js files that will be translaped
+  srcjs: ['./src/**/*/*.js'],
   //Points where the translapped server file will be hosted
   destination: './server',
   //Poitns to the file that contains the app bundle parts to be translapped
@@ -114,10 +114,8 @@ gulp.task('restart', () => {
   express.start.bind(express)();
 });
 
-//We set a watcher that we watch to changes into the paths.serversrcjs files.
+//We set a watcher that we watch to changes into the paths.srcjs files.
 //If there are, it calls the build task
 gulp.task('watch', () => {
-  return watch(paths.serversrcjs , () => {
-    gulp.start('build');
-  })
+  gulp.watch(paths.srcjs , ['build']);
 })
