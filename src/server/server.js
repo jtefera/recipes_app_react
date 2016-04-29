@@ -11,8 +11,12 @@ import morgan from 'morgan'
 //Server
 let app = express();
 
-let paths = {
-	recipejson: "/json/recipe_library.json"
+const PATHS = {
+	recipejson: "./public/json/recipe_library.json",
+	deleteRecipe: "/recipes/delete",
+	addRecipe: "/recipes/add",
+	getAllRecipes: "/recipes/get",
+	editRecipe: "/recipes/edit"
 };
 
 //logger
@@ -24,20 +28,23 @@ app.use(express.static('public'));
 //Parses json files so they can be usable
 app.use(bodyParser.json());
 
-//parses url files spliting the url in its different categories
+//parses url files spliting the url in its different categoriesssss
 app.use(bodyParser.urlencoded({extended: true}));
 
-app.post(paths.recipejson, function(req, res){
+app.post(PATHS.addRecipe, function(req, res){
 	//Read the recipe_library.json file, add data to library
 	//Reupload file
-	fs.readFile("./public" + paths.recipejson, (err, data) => {
+	console.log(".....ADDING RECIPE...............");
+	console.log(req.body);
+	console.log("...................");
+	fs.readFile(PATHS.recipejson, (err, data) => {
 		if(err) {
 			console.error(err);
 		}
 		let recipes = JSON.parse(data);
 		let newrecipe = req.body;
 		recipes.push(newrecipe);
-		fs.writeFile("./public" + paths.recipejson, JSON.stringify(recipes, null, 4), (err) => {
+		fs.writeFile(PATHS.recipejson, JSON.stringify(recipes, null, 4), (err) => {
 			if(err) {
 				console.error(err);
 			}
@@ -46,6 +53,45 @@ app.post(paths.recipejson, function(req, res){
 	});
 });
 
+app.post(PATHS.deleteRecipe, (req, res) => {
+	console.log("--------------Deleting Recipe------------");
+	fs.readFile(PATHS.recipejson, (err, data) => {
+		if(err) {
+			console.error(err);
+		}
+		let recipes = JSON.parse(data);
+		let idOfRecipeToDelete = req.body.idRecipe;
+		recipes.splice(idOfRecipeToDelete, 1);
+		fs.writeFile(PATHS.recipejson, JSON.stringify(recipes, null, 4), (err) => {
+			if(err) {
+				console.error(err);
+			}
+			res.json(recipes);
+		});
+	} )
+});
+
+app.post(PATHS.editRecipe, (req, res) => {
+	console.log("--------------Editing Recipe------------");
+	console.log(PATHS);
+	fs.readFile(PATHS.recipejson, (err, data) => {
+		if(err) {
+			console.error(err);
+		}
+		let recipes = JSON.parse(data),
+				idToModify = req.body.idRecipe,
+				newRecipe = req.body.recipe;
+		console.log("---ID---->", idToModify);
+		console.log("----NewRecipe---->", newRecipe);
+		recipes[idToModify] = newRecipe;
+		fs.writeFile(PATHS.recipejson, JSON.stringify(recipes, null, 4), (err) => {
+			if(err) {
+				console.error(err);
+			}
+			res.json(recipes);
+		});
+	});
+});
 
 /*app.use('/js/', babel({
 	srcPath: 'js/src',

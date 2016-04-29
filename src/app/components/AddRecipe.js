@@ -74,7 +74,10 @@ class Page extends React.Component {
 				);
 			default:
 				return (
-					<Review recipe={this.props.recipe} />
+					<Review
+						recipe={this.props.recipe}
+						saveRecipeHandler={this.props.saveRecipeHandler}
+					/>
 				);
 		}
 	}
@@ -84,33 +87,44 @@ class Page extends React.Component {
 class AddRecipe extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {
-			step: 5,
-			recipe: {
-				basicInfo: {
-					name: "Pasta alla Carbonara",
-					duration: 40,
-					difficulty: 3,
-					numPlates: 3
-				},
-				ingredients: [
-					{
-						name: "Tomate",
-						quantity: "2kg"
-					},
-					{
-						name: "Pasta",
-						quantity: "500gr"
-					}
-				],
-				steps: [
-					{text: "Chop the onions"},
-					{text: "Heat the oil"},
-					{text: "Fry the onions"},
-					{text: "Add the tomatoes"}
-				]
-			}
+		var isEditRecipeMode = this.props.editRecipeMode;
+		var isSeeRecipeMode = this.props.seeRecipeMode;
+		var initialStep = 1;
+		if(isEditRecipeMode) {
+			initialStep = 2;
 		}
+		if(isSeeRecipeMode) {
+			initialStep = 5;
+		}
+		this.state = {
+			step: initialStep,
+			recipe: (isEditRecipeMode || isSeeRecipeMode)
+							? this.props.recipeFocused
+							:{
+								basicInfo: {
+									name: "Pasta alla Carbonara",
+									duration: 40,
+									difficulty: 3,
+									numPlates: 3
+								},
+								ingredients: [
+									{
+										name: "Tomate",
+										quantity: "2kg"
+									},
+									{
+										name: "Pasta",
+										quantity: "500gr"
+									}
+								],
+								steps: [
+									{text: "Chop the onions"},
+									{text: "Heat the oil"},
+									{text: "Fry the onions"},
+									{text: "Add the tomatoes"}
+								]
+							}
+		};
 	}
 	changePageHandler(page) {
 		this.setState({
@@ -144,12 +158,21 @@ class AddRecipe extends React.Component {
 			//Delete ingredient
 			recipe.steps.splice(key, 1);
 		} else {
-			//Modify ingredient
+			//Modify ingredient s
 			recipe.steps[key] = newValue;
 		}
 		this.setState({
 			'recipe': recipe
 		});
+	}
+	saveRecipeHandler(recipe) {
+		let idRecipe = this.props.idRecipeFocused;
+		console.log(this.props);
+		if(this.props.editRecipeMode){
+			this.props.saveEditedRecipe(idRecipe, recipe);
+		} else {
+			this.props.saveRecipe(recipe);
+		}
 	}
 	render() {
 		return (
@@ -160,6 +183,8 @@ class AddRecipe extends React.Component {
 					updaterProp={this.changePropRecipeHandler.bind(this)}
 					modifyIngredientHandler={this.modifyIngredientHandler.bind(this)}
 					modifyStepHandler={this.modifyStepHandler.bind(this)}
+					saveEditedRecipe={this.props.saveEditedRecipe}
+					saveRecipeHandler={this.saveRecipeHandler.bind(this)}
 				/>
 				<Pagination
 					step={this.state.step}

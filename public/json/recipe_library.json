@@ -1,9 +1,9 @@
 [
     {
         "basicInfo": {
-            "name": "Pasta alla Carbonara",
-            "duration": "40",
+            "name": "Pasta alla Carbonara Italiana",
             "difficulty": "3",
+            "duration": "40",
             "numPlates": "3"
         },
         "ingredients": [
@@ -33,9 +33,49 @@
     },
     {
         "basicInfo": {
-            "name": "Pasta alla Carbonara",
-            "duration": "40",
+            "name": "Arroz a la francesa",
+            "difficulty": "2",
+            "duration": "75",
+            "numPlates": "4"
+        },
+        "ingredients": [
+            {
+                "name": "Arroz",
+                "quantity": "1kg"
+            },
+            {
+                "name": "Cebolla",
+                "quantity": "Medio Kilo"
+            },
+            {
+                "name": "Salsa de Tomate",
+                "quantity": "Un Bote"
+            },
+            {
+                "name": "Huevos",
+                "quantity": "2"
+            }
+        ],
+        "steps": [
+            {
+                "text": "En una cazuela,"
+            },
+            {
+                "text": "En una sarten,"
+            },
+            {
+                "text": "Viertes cebolla"
+            },
+            {
+                "text": "Viertes tomate"
+            }
+        ]
+    },
+    {
+        "basicInfo": {
+            "name": "Pasta alla Bolognesa",
             "difficulty": "3",
+            "duration": "40",
             "numPlates": "3"
         },
         "ingredients": [

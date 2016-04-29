@@ -35,12 +35,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 //Server
 var app = (0, _express2.default)();
 
-var PATHS = {
-	recipejson: "./public/json/recipe_library.json",
+var paths = {
+	recipejson: "/public/json/recipe_library.json",
 	deleteRecipe: "/recipes/delete",
 	addRecipe: "/recipes/add",
-	getAllRecipes: "/recipes/get",
-	editRecipe: "/recipes/edit"
+	getRecipes: "/recipes/get",
+	editRecipes: "/recipes/edit"
 };
 
 //logger
@@ -55,20 +55,17 @@ app.use(_bodyParser2.default.json());
 //parses url files spliting the url in its different categoriesssss
 app.use(_bodyParser2.default.urlencoded({ extended: true }));
 
-app.post(PATHS.addRecipe, function (req, res) {
+app.post(paths.addRecipe, function (req, res) {
 	//Read the recipe_library.json file, add data to library
 	//Reupload file
-	console.log(".....ADDING RECIPE...............");
-	console.log(req.body);
-	console.log("...................");
-	_fs2.default.readFile(PATHS.recipejson, function (err, data) {
+	_fs2.default.readFile(paths.recipejson, function (err, data) {
 		if (err) {
 			console.error(err);
 		}
 		var recipes = JSON.parse(data);
 		var newrecipe = req.body;
 		recipes.push(newrecipe);
-		_fs2.default.writeFile(PATHS.recipejson, JSON.stringify(recipes, null, 4), function (err) {
+		_fs2.default.writeFile(paths.recipejson, JSON.stringify(recipes, null, 4), function (err) {
 			if (err) {
 				console.error(err);
 			}
@@ -77,16 +74,15 @@ app.post(PATHS.addRecipe, function (req, res) {
 	});
 });
 
-app.post(PATHS.deleteRecipe, function (req, res) {
-	console.log("--------------Deleting Recipe------------");
-	_fs2.default.readFile(PATHS.recipejson, function (err, data) {
+app.post(paths.deleteRecipe, function (req, res) {
+	_fs2.default.readFile(paths.recipejson, function (err, data) {
 		if (err) {
 			console.error(err);
 		}
 		var recipes = JSON.parse(data);
-		var idOfRecipeToDelete = req.body.idRecipe;
+		var idOfRecipeToDelete = req.body.id;
 		recipes.splice(idOfRecipeToDelete, 1);
-		_fs2.default.writeFile(PATHS.recipejson, JSON.stringify(recipes, null, 4), function (err) {
+		_fs2.default.writeFile(paths.recipejson, JSON.stringify(recipes, null, 4), function (err) {
 			if (err) {
 				console.error(err);
 			}
@@ -95,20 +91,17 @@ app.post(PATHS.deleteRecipe, function (req, res) {
 	});
 });
 
-app.post(PATHS.editRecipe, function (req, res) {
-	console.log("--------------Editing Recipe------------");
-	console.log(PATHS);
-	_fs2.default.readFile(PATHS.recipejson, function (err, data) {
+app.post("/recipes/edit", function (req, res) {
+	_fs2.default.readFile(paths.recipejson, function (err, data) {
 		if (err) {
 			console.error(err);
 		}
 		var recipes = JSON.parse(data),
-		    idToModify = req.body.idRecipe,
+		    idToModify = req.body.id,
 		    newRecipe = req.body.recipe;
-		console.log("---ID---->", idToModify);
-		console.log("----NewRecipe---->", newRecipe);
+		console.log(newRecipe);
 		recipes[idToModify] = newRecipe;
-		_fs2.default.writeFile(PATHS.recipejson, JSON.stringify(recipes, null, 4), function (err) {
+		_fs2.default.writeFile(paths.recipejson, JSON.stringify(recipes, null, 4), function (err) {
 			if (err) {
 				console.error(err);
 			}

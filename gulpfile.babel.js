@@ -23,6 +23,10 @@ import server from 'gulp-live-server'
 //Allows to join js modules into a single file
 import webpack from 'gulp-webpack'
 
+//Allows to delete folders and files. used in replacement of rimraf
+//that was causing a some problems
+import del from 'del'
+
 //Important paths that wit will be used
 const paths = {
   //Points to the pre-compiled es2015 server js files that will be translaped
@@ -31,7 +35,7 @@ const paths = {
   destination: './server',
   //Points to the the pre-translaped es2015 js files of the React
   //app are hosted
-  appsrcjs: './src/app/**/*/*.js',
+  appsrcjs: './src/app/**/*.js',
   //Poitns to the file that contains the app bundle parts to be translapped
   appMainJsSrc: './src/app/main.js',
   //Points to the folder where the translapped files will be hosted
@@ -65,7 +69,11 @@ gulp.task('build', cb => {
 gulp.task('clean', cb => {
   //rimraf erases all files on the destination folder.
   //the destination contains the transpiled files
-  rimraf(paths.destination, cb);
+  //rimraf(paths.destination, cb);
+  return del([
+    paths.destination
+  ]);
+  if(cb) cb();
 });
 
 //not used right now. Is a module created by facebook to give
@@ -87,6 +95,7 @@ gulp.task('babel', shell.task([
 //main.js contains all the requires of the different modules
 //index.js is the file than the html will call when it calls our script!
 gulp.task('webpack', () => {
+  process.stdout.write('watch mee app app \n')
   //We create a stream where main.js is the entry point
   return gulp.src(paths.appMainJsSrc)
           //we pipe that stream into webpack that will do the piping
@@ -123,13 +132,11 @@ gulp.task("justwatching", () => {
 });
 
 gulp.task('watchServer', () => {
-  process.stdout.write('watch mee server server \n')
   gulp.watch(paths.serversrcjs , (cb) => run('clean', 'babel', 'restart'));
 });
 
 gulp.task('watchApp', () => {
-  process.stdout.write('watch mee app app \n')
-  gulp.watch(paths.appsrcjs, ['webpack']);
+  gulp.watch(paths.appsrcjs, (cb) => run('webpack'));
 });
 
 //We set a watcher that we watch to changes into the paths.srcjs files.

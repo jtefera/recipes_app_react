@@ -76,6 +76,14 @@
 
 	var _AddRecipe2 = _interopRequireDefault(_AddRecipe);
 
+	var _AllRecipes = __webpack_require__(175);
+
+	var _AllRecipes2 = _interopRequireDefault(_AllRecipes);
+
+	var _SeeRecipe = __webpack_require__(176);
+
+	var _SeeRecipe2 = _interopRequireDefault(_SeeRecipe);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -94,25 +102,279 @@
 					Page
 					Pagination
 				Recipes
-				Search recipes
+				Search recipesss
 	*/
 
-	var App = function (_React$Component) {
-		_inherits(App, _React$Component);
+	var MenuBar = function (_React$Component) {
+		_inherits(MenuBar, _React$Component);
+
+		function MenuBar() {
+			_classCallCheck(this, MenuBar);
+
+			return _possibleConstructorReturn(this, Object.getPrototypeOf(MenuBar).apply(this, arguments));
+		}
+
+		_createClass(MenuBar, [{
+			key: 'changePage',
+			value: function changePage(e) {
+				e.preventDefault();
+				this.props.changePage(e.target.value);
+			}
+		}, {
+			key: 'render',
+			value: function render() {
+				return _react2.default.createElement(
+					'div',
+					{ className: 'menuBar' },
+					_react2.default.createElement(
+						'ul',
+						{ className: 'nav nav-pills' },
+						_react2.default.createElement(
+							'li',
+							{ className: 'active' },
+							_react2.default.createElement(
+								'button',
+								{
+									className: 'btn navbar-btn btn-default',
+									value: 'allrecipes',
+									onClick: this.changePage.bind(this) },
+								'Recipes'
+							)
+						),
+						_react2.default.createElement(
+							'li',
+							null,
+							_react2.default.createElement(
+								'button',
+								{
+									className: 'btn navbar-btn btn-default',
+									value: 'addrecipe',
+									onClick: this.changePage.bind(this) },
+								'Add Recipe'
+							)
+						)
+					)
+				);
+			}
+		}]);
+
+		return MenuBar;
+	}(_react2.default.Component);
+
+	var AppPage = function (_React$Component2) {
+		_inherits(AppPage, _React$Component2);
+
+		function AppPage() {
+			_classCallCheck(this, AppPage);
+
+			return _possibleConstructorReturn(this, Object.getPrototypeOf(AppPage).apply(this, arguments));
+		}
+
+		_createClass(AppPage, [{
+			key: 'render',
+			value: function render() {
+				var page = this.props.page;
+				switch (page) {
+					case "allrecipes":
+						return _react2.default.createElement(_AllRecipes2.default, {
+							seeRecipe: this.props.seeRecipe,
+							editRecipe: this.props.editRecipe,
+							deleteRecipe: this.props.deleteRecipe,
+							recipes: this.props.recipes,
+							saveRecipe: this.props.saveRecipe
+						});
+						break;
+					case "addrecipe":
+						return _react2.default.createElement(_AddRecipe2.default, {
+							saveRecipe: this.props.saveRecipe
+						});
+						break;
+					case "editpage":
+						return _react2.default.createElement(_AddRecipe2.default, {
+							editRecipeMode: this.props.editRecipeMode,
+							recipeFocused: this.props.recipeFocused,
+							saveEditedRecipe: this.props.saveEditedRecipe,
+							idRecipeFocused: this.props.idRecipeFocused
+						});
+						break;
+					case "seerecipe":
+						return _react2.default.createElement(_SeeRecipe2.default, {
+							recipe: this.props.recipeFocused
+						});
+						break;
+					default:
+						return _react2.default.createElement(
+							'div',
+							null,
+							' Where are we? '
+						);
+				}
+			}
+		}]);
+
+		return AppPage;
+	}(_react2.default.Component);
+
+	var App = function (_React$Component3) {
+		_inherits(App, _React$Component3);
 
 		function App(props) {
 			_classCallCheck(this, App);
 
-			return _possibleConstructorReturn(this, Object.getPrototypeOf(App).call(this, props));
+			var _this3 = _possibleConstructorReturn(this, Object.getPrototypeOf(App).call(this, props));
+
+			_this3.state = {
+				page: "allrecipes",
+				recipes: [],
+				editRecipeMode: false,
+				seeRecipeMode: false,
+				recipeFocused: {},
+				idRecipeFocused: null
+			};
+			return _this3;
 		}
 
 		_createClass(App, [{
+			key: 'loadRecipesFromServer',
+			value: function loadRecipesFromServer() {
+				var _this4 = this;
+
+				$.ajax({
+					url: '/json/recipe_library.json',
+					dataType: 'json',
+					success: function (data) {
+						_this4.setState({
+							recipes: data
+						});
+					}.bind(this),
+					error: function error(err) {
+						console.error(err);
+					}
+				});
+			}
+		}, {
+			key: 'componentDidMount',
+			value: function componentDidMount() {
+				this.loadRecipesFromServer();
+			}
+		}, {
+			key: 'seeRecipe',
+			value: function seeRecipe(idRecipe) {
+				var recipe = this.state.recipes[idRecipe];
+				this.setState({
+					seeRecipeMode: true,
+					recipeFocused: recipe,
+					idRecipeFocused: idRecipe,
+					page: "seerecipe"
+				});
+			}
+		}, {
+			key: 'deleteRecipe',
+			value: function deleteRecipe(idRecipe) {
+				var _this5 = this;
+
+				$.ajax({
+					url: "/recipes/delete",
+					method: "POST",
+					data: {
+						'idRecipe': idRecipe
+					},
+					success: function (err, data) {
+						if (err) {
+							console.error(err);
+						}
+						_this5.loadRecipesFromServer();
+					}.bind(this)
+				});
+			}
+		}, {
+			key: 'changePage',
+			value: function changePage(page) {
+				this.setState({
+					page: page,
+					editRecipeMode: false,
+					seeRecipeMode: false,
+					recipeFocused: {},
+					idRecipeFocused: null
+				});
+			}
+		}, {
+			key: 'editRecipe',
+			value: function editRecipe(indexRecipe) {
+				var recipe = this.state.recipes[indexRecipe];
+				this.setState({
+					editRecipeMode: true,
+					recipeFocused: recipe,
+					idRecipeFocused: indexRecipe,
+					page: "editpage"
+				});
+			}
+		}, {
+			key: 'saveEditedRecipe',
+			value: function saveEditedRecipe(idRecipe, recipe) {
+				var _this6 = this;
+
+				$.ajax({
+					url: 'recipes/edit',
+					method: 'POST',
+					dataType: 'json',
+					data: {
+						'idRecipe': idRecipe,
+						'recipe': recipe
+					},
+					success: function (data) {
+						console.log("Archivo Editado!");
+						_this6.setState({
+							page: "allrecipes",
+							recipes: data,
+							editRecipeMode: false,
+							recipeFocused: {},
+							idRecipeFocused: -1
+						});
+					}.bind(this)
+				});
+			}
+		}, {
+			key: 'saveRecipe',
+			value: function saveRecipe(recipe) {
+				var _this7 = this;
+
+				$.ajax({
+					url: 'recipes/add',
+					method: 'POST',
+					dataType: 'json',
+					data: recipe,
+					success: function (data) {
+						console.log("Archivo Subido!");
+						_this7.setState({
+							page: "allrecipes",
+							recipes: data,
+							editRecipeMode: false,
+							recipeFocused: {},
+							idRecipeFocused: -1
+						});
+					}.bind(this)
+				});
+			}
+		}, {
 			key: 'render',
 			value: function render() {
 				return _react2.default.createElement(
 					'div',
 					null,
-					_react2.default.createElement(_AddRecipe2.default, null)
+					_react2.default.createElement(MenuBar, { changePage: this.changePage.bind(this) }),
+					_react2.default.createElement(AppPage, {
+						page: this.state.page,
+						seeRecipe: this.seeRecipe.bind(this),
+						editRecipe: this.editRecipe.bind(this),
+						deleteRecipe: this.deleteRecipe.bind(this),
+						recipes: this.state.recipes,
+						editRecipeMode: this.state.editRecipeMode,
+						recipeFocused: this.state.recipeFocused,
+						idRecipeFocused: this.state.idRecipeFocused,
+						saveEditedRecipe: this.saveEditedRecipe.bind(this),
+						saveRecipe: this.saveRecipe.bind(this)
+					})
 				);
 			}
 		}]);
@@ -20198,7 +20460,10 @@
 							modifyStepHandler: this.props.modifyStepHandler
 						});
 					default:
-						return _react2.default.createElement(_review2.default, { recipe: this.props.recipe });
+						return _react2.default.createElement(_review2.default, {
+							recipe: this.props.recipe,
+							saveRecipeHandler: this.props.saveRecipeHandler
+						});
 				}
 			}
 		}]);
@@ -20214,9 +20479,18 @@
 
 			var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(AddRecipe).call(this, props));
 
+			var isEditRecipeMode = _this2.props.editRecipeMode;
+			var isSeeRecipeMode = _this2.props.seeRecipeMode;
+			var initialStep = 1;
+			if (isEditRecipeMode) {
+				initialStep = 2;
+			}
+			if (isSeeRecipeMode) {
+				initialStep = 5;
+			}
 			_this2.state = {
-				step: 5,
-				recipe: {
+				step: initialStep,
+				recipe: isEditRecipeMode || isSeeRecipeMode ? _this2.props.recipeFocused : {
 					basicInfo: {
 						name: "Pasta alla Carbonara",
 						duration: 40,
@@ -20276,12 +20550,23 @@
 					//Delete ingredient
 					recipe.steps.splice(key, 1);
 				} else {
-					//Modify ingredient
+					//Modify ingredient s
 					recipe.steps[key] = newValue;
 				}
 				this.setState({
 					'recipe': recipe
 				});
+			}
+		}, {
+			key: 'saveRecipeHandler',
+			value: function saveRecipeHandler(recipe) {
+				var idRecipe = this.props.idRecipeFocused;
+				console.log(this.props);
+				if (this.props.editRecipeMode) {
+					this.props.saveEditedRecipe(idRecipe, recipe);
+				} else {
+					this.props.saveRecipe(recipe);
+				}
 			}
 		}, {
 			key: 'render',
@@ -20294,7 +20579,9 @@
 						recipe: this.state.recipe,
 						updaterProp: this.changePropRecipeHandler.bind(this),
 						modifyIngredientHandler: this.modifyIngredientHandler.bind(this),
-						modifyStepHandler: this.modifyStepHandler.bind(this)
+						modifyStepHandler: this.modifyStepHandler.bind(this),
+						saveEditedRecipe: this.props.saveEditedRecipe,
+						saveRecipeHandler: this.saveRecipeHandler.bind(this)
 					}),
 					_react2.default.createElement(_pagination2.default, {
 						step: this.state.step,
@@ -20399,7 +20686,7 @@
 			var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(BasicInfo).call(this, props));
 
 			_this.state = {
-				recipeName: _this.props.basicInfo.name || "",
+				name: _this.props.basicInfo.name || "",
 				difficulty: _this.props.basicInfo.difficulty || 0,
 				duration: _this.props.basicInfo.duration || 0,
 				numPlates: _this.props.basicInfo.numPlates || 4
@@ -20411,7 +20698,7 @@
 			key: 'update',
 			value: function update(e) {
 				var info = {
-					recipeName: _reactDom2.default.findDOMNode(this.refs.recipeName).value,
+					name: _reactDom2.default.findDOMNode(this.refs.name).value,
 					difficulty: _reactDom2.default.findDOMNode(this.refs.difficulty).value,
 					duration: _reactDom2.default.findDOMNode(this.refs.duration).value,
 					numPlates: _reactDom2.default.findDOMNode(this.refs.numPlates).value
@@ -20437,15 +20724,15 @@
 							{ 'class': 'form-group' },
 							_react2.default.createElement(
 								'label',
-								{ 'for': 'recipeName' },
+								{ 'for': 'name' },
 								'Recipe Name'
 							),
 							_react2.default.createElement('input', {
-								ref: 'recipeName',
+								ref: 'name',
 								type: 'text',
 								placeholder: 'your recipe name',
 								onChange: this.update.bind(this),
-								value: this.state.recipeName,
+								value: this.state.name,
 								className: 'form-control input-lg'
 							})
 						),
@@ -21740,7 +22027,7 @@
 /* 173 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 		value: true
@@ -21752,6 +22039,100 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
+	var _allRecipeInfo = __webpack_require__(174);
+
+	var _allRecipeInfo2 = _interopRequireDefault(_allRecipeInfo);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var SaveBtn = function (_React$Component) {
+		_inherits(SaveBtn, _React$Component);
+
+		function SaveBtn(props) {
+			_classCallCheck(this, SaveBtn);
+
+			return _possibleConstructorReturn(this, Object.getPrototypeOf(SaveBtn).call(this, props));
+		}
+
+		_createClass(SaveBtn, [{
+			key: 'saveRecipe',
+			value: function saveRecipe() {
+				var recipe = this.props.recipe;
+				this.props.saveRecipeHandler(recipe);
+			}
+		}, {
+			key: 'render',
+			value: function render() {
+				return _react2.default.createElement(
+					'button',
+					{
+						className: 'saveRecipeBtn btn btn-info',
+						onClick: this.saveRecipe.bind(this)
+					},
+					'Save recipes!'
+				);
+			}
+		}]);
+
+		return SaveBtn;
+	}(_react2.default.Component);
+
+	var Review = function (_React$Component2) {
+		_inherits(Review, _React$Component2);
+
+		function Review() {
+			_classCallCheck(this, Review);
+
+			return _possibleConstructorReturn(this, Object.getPrototypeOf(Review).apply(this, arguments));
+		}
+
+		_createClass(Review, [{
+			key: 'render',
+			value: function render() {
+				return _react2.default.createElement(
+					'div',
+					{ className: 'review' },
+					_react2.default.createElement(_allRecipeInfo2.default, { recipe: this.props.recipe }),
+					_react2.default.createElement('hr', null),
+					_react2.default.createElement(SaveBtn, {
+						recipe: this.props.recipe,
+						saveRecipeHandler: this.props.saveRecipeHandler
+					})
+				);
+			}
+		}]);
+
+		return Review;
+	}(_react2.default.Component);
+
+	exports.default = Review;
+
+/***/ },
+/* 174 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(33);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -21762,18 +22143,18 @@
 
 	var ABasicInfo = function ABasicInfo(props) {
 		return _react2.default.createElement(
-			"tr",
+			'tr',
 			null,
 			_react2.default.createElement(
-				"td",
+				'td',
 				null,
 				_react2.default.createElement(
-					"b",
+					'b',
 					null,
 					props.nameinfo
 				),
-				_react2.default.createElement("br", null),
-				" ",
+				_react2.default.createElement('br', null),
+				' ',
 				props.info
 			)
 		);
@@ -21789,27 +22170,27 @@
 		}
 
 		_createClass(ShowBasicInfo, [{
-			key: "render",
+			key: 'render',
 			value: function render() {
 				var basicInfo = this.props.basicInfo;
 				return _react2.default.createElement(
-					"div",
-					{ className: "basicInfo" },
+					'div',
+					{ className: 'basicInfo' },
 					_react2.default.createElement(
-						"h3",
+						'h3',
 						null,
-						" Basic Info "
+						' Basic Info '
 					),
 					_react2.default.createElement(
-						"table",
+						'table',
 						null,
 						_react2.default.createElement(
-							"tbody",
+							'tbody',
 							null,
-							_react2.default.createElement(ABasicInfo, { nameinfo: "Recipe Name", info: basicInfo.name }),
-							_react2.default.createElement(ABasicInfo, { nameinfo: "Duration", info: basicInfo.duration + "min" }),
-							_react2.default.createElement(ABasicInfo, { nameinfo: "Dificulty Level", info: basicInfo.difficulty + "/5" }),
-							_react2.default.createElement(ABasicInfo, { nameinfo: "Number of plates", info: basicInfo.numPlates })
+							_react2.default.createElement(ABasicInfo, { nameinfo: 'Recipe Name', info: basicInfo.name }),
+							_react2.default.createElement(ABasicInfo, { nameinfo: 'Duration', info: basicInfo.duration + "min" }),
+							_react2.default.createElement(ABasicInfo, { nameinfo: 'Dificulty Level', info: basicInfo.difficulty + "/5" }),
+							_react2.default.createElement(ABasicInfo, { nameinfo: 'Number of plates', info: basicInfo.numPlates })
 						)
 					)
 				);
@@ -21829,34 +22210,34 @@
 		}
 
 		_createClass(ShowIngredients, [{
-			key: "render",
+			key: 'render',
 			value: function render() {
 				var ingredientsRows = this.props.ingredients.map(function (ingredient, index) {
 					return _react2.default.createElement(
-						"tr",
+						'tr',
 						{ key: index },
 						_react2.default.createElement(
-							"td",
+							'td',
 							null,
 							ingredient.quantity,
-							" of ",
+							' of ',
 							ingredient.name
 						)
 					);
 				});
 				return _react2.default.createElement(
-					"div",
-					{ className: "showIngredients" },
+					'div',
+					{ className: 'showIngredients' },
 					_react2.default.createElement(
-						"h3",
+						'h3',
 						null,
-						" Ingredients "
+						' Ingredients '
 					),
 					_react2.default.createElement(
-						"table",
+						'table',
 						null,
 						_react2.default.createElement(
-							"tbody",
+							'tbody',
 							null,
 							ingredientsRows
 						)
@@ -21878,34 +22259,34 @@
 		}
 
 		_createClass(ShowSteps, [{
-			key: "render",
+			key: 'render',
 			value: function render() {
 				var stepsRows = this.props.steps.map(function (step, index) {
 					return _react2.default.createElement(
-						"tr",
+						'tr',
 						{ key: index },
 						_react2.default.createElement(
-							"td",
+							'td',
 							null,
 							index + 1,
-							" - ",
+							' - ',
 							step.text
 						)
 					);
 				});
 				return _react2.default.createElement(
-					"div",
-					{ className: "showSteps" },
+					'div',
+					{ className: 'showSteps' },
 					_react2.default.createElement(
-						"h3",
+						'h3',
 						null,
-						" Steps "
+						' Steps '
 					),
 					_react2.default.createElement(
-						"table",
+						'table',
 						null,
 						_react2.default.createElement(
-							"tbody",
+							'tbody',
 							null,
 							stepsRows
 						)
@@ -21917,76 +22298,255 @@
 		return ShowSteps;
 	}(_react2.default.Component);
 
-	var SaveBtn = function (_React$Component4) {
-		_inherits(SaveBtn, _React$Component4);
+	var AllRecipeInfo = function (_React$Component4) {
+		_inherits(AllRecipeInfo, _React$Component4);
 
-		function SaveBtn(props) {
-			_classCallCheck(this, SaveBtn);
+		function AllRecipeInfo(props) {
+			_classCallCheck(this, AllRecipeInfo);
 
-			return _possibleConstructorReturn(this, Object.getPrototypeOf(SaveBtn).call(this, props));
+			return _possibleConstructorReturn(this, Object.getPrototypeOf(AllRecipeInfo).call(this, props));
 		}
 
-		_createClass(SaveBtn, [{
-			key: "saveRecipe",
-			value: function saveRecipe() {
-				var recipe = this.props.recipe;
-				$.ajax({
-					url: 'json/recipe_library.json',
-					method: 'POST',
-					dataType: 'json',
-					data: recipe,
-					success: function success() {
-						console.log("Archivo Subido!");
-					}
-				});
-			}
-		}, {
-			key: "render",
+		_createClass(AllRecipeInfo, [{
+			key: 'render',
 			value: function render() {
+				console.log(this.props);
 				return _react2.default.createElement(
-					"button",
-					{
-						className: "saveRecipeBtn btn btn-info",
-						onClick: this.saveRecipe.bind(this)
-					},
-					"Save recipes!"
-				);
-			}
-		}]);
-
-		return SaveBtn;
-	}(_react2.default.Component);
-
-	var Review = function (_React$Component5) {
-		_inherits(Review, _React$Component5);
-
-		function Review() {
-			_classCallCheck(this, Review);
-
-			return _possibleConstructorReturn(this, Object.getPrototypeOf(Review).apply(this, arguments));
-		}
-
-		_createClass(Review, [{
-			key: "render",
-			value: function render() {
-				return _react2.default.createElement(
-					"div",
-					{ className: "review" },
+					'div',
+					{ className: 'allRecipeInfo' },
 					_react2.default.createElement(ShowBasicInfo, { basicInfo: this.props.recipe.basicInfo }),
-					_react2.default.createElement("hr", null),
+					_react2.default.createElement('hr', null),
 					_react2.default.createElement(ShowIngredients, { ingredients: this.props.recipe.ingredients }),
-					_react2.default.createElement("hr", null),
-					_react2.default.createElement(ShowSteps, { steps: this.props.recipe.steps }),
-					_react2.default.createElement("hr", null),
-					_react2.default.createElement(SaveBtn, { recipe: this.props.recipe })
+					_react2.default.createElement('hr', null),
+					_react2.default.createElement(ShowSteps, { steps: this.props.recipe.steps })
 				);
 			}
 		}]);
 
-		return Review;
+		return AllRecipeInfo;
 	}(_react2.default.Component);
 
-	exports.default = Review;
+	exports.default = AllRecipeInfo;
+
+/***/ },
+/* 175 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(33);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var RecipeBtns = function (_React$Component) {
+	  _inherits(RecipeBtns, _React$Component);
+
+	  function RecipeBtns() {
+	    _classCallCheck(this, RecipeBtns);
+
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(RecipeBtns).apply(this, arguments));
+	  }
+
+	  _createClass(RecipeBtns, [{
+	    key: 'seeRecipe',
+	    value: function seeRecipe(e) {
+	      e.preventDefault();
+	      var idRecipe = this.props.idRecipe;
+	      this.props.seeRecipe(idRecipe);
+	    }
+	  }, {
+	    key: 'editRecipe',
+	    value: function editRecipe(e) {
+	      e.preventDefault();
+	      var idRecipe = this.props.idRecipe;
+	      this.props.editRecipe(idRecipe);
+	    }
+	  }, {
+	    key: 'deleteRecipe',
+	    value: function deleteRecipe(e) {
+	      e.preventDefault();
+	      var idRecipe = this.props.idRecipe;
+	      this.props.deleteRecipe(idRecipe);
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'btn-group' },
+	        _react2.default.createElement(
+	          'button',
+	          {
+	            className: 'btn btn-default',
+	            onClick: this.seeRecipe.bind(this) },
+	          'See'
+	        ),
+	        _react2.default.createElement(
+	          'button',
+	          {
+	            className: 'btn btn-warning',
+	            onClick: this.editRecipe.bind(this)
+	          },
+	          'Edit'
+	        ),
+	        _react2.default.createElement(
+	          'button',
+	          {
+	            className: 'btn btn-danger',
+	            onClick: this.deleteRecipe.bind(this)
+	          },
+	          'X'
+	        )
+	      );
+	    }
+	  }]);
+
+	  return RecipeBtns;
+	}(_react2.default.Component);
+
+	var ListAllRecipes = function (_React$Component2) {
+	  _inherits(ListAllRecipes, _React$Component2);
+
+	  function ListAllRecipes() {
+	    _classCallCheck(this, ListAllRecipes);
+
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(ListAllRecipes).apply(this, arguments));
+	  }
+
+	  _createClass(ListAllRecipes, [{
+	    key: 'render',
+	    value: function render() {
+	      var _this3 = this;
+
+	      var recipesNames = this.props.recipes.map(function (recipe, index) {
+	        return _react2.default.createElement(
+	          'li',
+	          { key: index },
+	          recipe.basicInfo.name,
+	          _react2.default.createElement(RecipeBtns, {
+	            idRecipe: index,
+	            seeRecipe: _this3.props.seeRecipe,
+	            deleteRecipe: _this3.props.deleteRecipe,
+	            editRecipe: _this3.props.editRecipe
+	          })
+	        );
+	      });
+	      return _react2.default.createElement(
+	        'ul',
+	        null,
+	        recipesNames
+	      );
+	    }
+	  }]);
+
+	  return ListAllRecipes;
+	}(_react2.default.Component);
+
+	var AllRecipes = function (_React$Component3) {
+	  _inherits(AllRecipes, _React$Component3);
+
+	  function AllRecipes(props) {
+	    _classCallCheck(this, AllRecipes);
+
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(AllRecipes).call(this, props));
+	  }
+
+	  _createClass(AllRecipes, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'AllRecipes' },
+	        'Let us start listing all recipes!',
+	        _react2.default.createElement(ListAllRecipes, {
+	          recipes: this.props.recipes,
+	          deleteRecipe: this.props.deleteRecipe,
+	          editRecipe: this.props.editRecipe,
+	          seeRecipe: this.props.seeRecipe
+	        })
+	      );
+	    }
+	  }]);
+
+	  return AllRecipes;
+	}(_react2.default.Component);
+
+	exports.default = AllRecipes;
+
+/***/ },
+/* 176 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(33);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	var _allRecipeInfo = __webpack_require__(174);
+
+	var _allRecipeInfo2 = _interopRequireDefault(_allRecipeInfo);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var SeeRecipe = function (_React$Component) {
+	  _inherits(SeeRecipe, _React$Component);
+
+	  function SeeRecipe() {
+	    _classCallCheck(this, SeeRecipe);
+
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(SeeRecipe).apply(this, arguments));
+	  }
+
+	  _createClass(SeeRecipe, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement(_allRecipeInfo2.default, { recipe: this.props.recipe })
+	      );
+	    }
+	  }]);
+
+	  return SeeRecipe;
+	}(_react2.default.Component);
+
+	exports.default = SeeRecipe;
 
 /***/ }
 /******/ ]);

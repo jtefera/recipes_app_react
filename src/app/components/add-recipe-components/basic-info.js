@@ -1,11 +1,11 @@
-import React from 'react' 
+import React from 'react'
 import ReactDOM from 'react-dom'
 
 class BasicInfo extends React.Component {
 	constructor(props){
 		super(props);
 		this.state = {
-			recipeName : this.props.basicInfo.name || "",
+			name : this.props.basicInfo.name || "",
 			difficulty: this.props.basicInfo.difficulty || 0,
 			duration: this.props.basicInfo.duration || 0,
 			numPlates: this.props.basicInfo.numPlates || 4
@@ -13,7 +13,7 @@ class BasicInfo extends React.Component {
 	}
 	update(e) {
 		var info = {
-			recipeName : ReactDOM.findDOMNode(this.refs.recipeName).value,
+			name: ReactDOM.findDOMNode(this.refs.name).value,
 			difficulty: ReactDOM.findDOMNode(this.refs.difficulty).value,
 			duration: ReactDOM.findDOMNode(this.refs.duration).value,
 			numPlates: ReactDOM.findDOMNode(this.refs.numPlates).value
@@ -28,18 +28,18 @@ class BasicInfo extends React.Component {
 	render() {
 		return (
 			<div class="BasicInfo form slide">
-				Receipe Name: 
+				Receipe Name:
 				<form role="form">
 					<div class="form-group">
-						<label for="recipeName">
+						<label for="name">
 							Recipe Name
 						</label>
-						<input 
-							ref="recipeName"
-							type="text" 
-							placeholder="your recipe name" 
-							onChange={this.update.bind(this)} 
-							value={this.state.recipeName}
+						<input
+							ref="name"
+							type="text"
+							placeholder="your recipe name"
+							onChange={this.update.bind(this)}
+							value={this.state.name}
 							className="form-control input-lg"
 						/>
 					</div>
@@ -47,12 +47,12 @@ class BasicInfo extends React.Component {
 						<label for="difficulty">
 							Difficulty of the recipe
 						</label>
-						<input 
+						<input
 							ref="difficulty"
 							type="range"
-							min={0} 
+							min={0}
 							max={5}
-							onChange={this.update.bind(this)} 
+							onChange={this.update.bind(this)}
 							value={this.state.difficulty}
 						/>
 					</div>
@@ -60,13 +60,13 @@ class BasicInfo extends React.Component {
 						<label for="duration">
 							Duration of the recipe
 						</label>
-						<input 
+						<input
 							ref="duration"
 							type="range"
-							min={0} 
+							min={0}
 							max={120}
 							step={5}
-							onChange={this.update.bind(this)} 
+							onChange={this.update.bind(this)}
 							value={this.state.duration}
 						/>
 					</div>
@@ -74,10 +74,10 @@ class BasicInfo extends React.Component {
 						<label for="numPlates">
 							Number of plates
 						</label>
-						<input 
+						<input
 							ref="numPlates"
 							type="number"
-							onChange={this.update.bind(this)} 
+							onChange={this.update.bind(this)}
 							value={this.state.numPlates}
 							className="form-control input-lg"
 						/>
