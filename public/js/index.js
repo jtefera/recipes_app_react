@@ -76,11 +76,15 @@
 
 	var _AddRecipe2 = _interopRequireDefault(_AddRecipe);
 
-	var _AllRecipes = __webpack_require__(175);
+	var _EditRecipe = __webpack_require__(175);
+
+	var _EditRecipe2 = _interopRequireDefault(_EditRecipe);
+
+	var _AllRecipes = __webpack_require__(176);
 
 	var _AllRecipes2 = _interopRequireDefault(_AllRecipes);
 
-	var _SeeRecipe = __webpack_require__(176);
+	var _SeeRecipe = __webpack_require__(177);
 
 	var _SeeRecipe2 = _interopRequireDefault(_SeeRecipe);
 
@@ -181,7 +185,11 @@
 							editRecipe: this.props.editRecipe,
 							deleteRecipe: this.props.deleteRecipe,
 							recipes: this.props.recipes,
-							saveRecipe: this.props.saveRecipe
+							saveRecipe: this.props.saveRecipe,
+							recipeListPage: this.props.recipeListPage,
+							numRecipesPerPage: this.props.numRecipesPerPage,
+							numTotalRecipes: this.props.numTotalRecipes,
+							changeRecipeListPage: this.props.changeRecipeListPage
 						});
 						break;
 					case "addrecipe":
@@ -190,7 +198,7 @@
 						});
 						break;
 					case "editpage":
-						return _react2.default.createElement(_AddRecipe2.default, {
+						return _react2.default.createElement(_EditRecipe2.default, {
 							editRecipeMode: this.props.editRecipeMode,
 							recipeFocused: this.props.recipeFocused,
 							saveEditedRecipe: this.props.saveEditedRecipe,
@@ -229,22 +237,34 @@
 				editRecipeMode: false,
 				seeRecipeMode: false,
 				recipeFocused: {},
-				idRecipeFocused: null
+				idRecipeFocused: null,
+				recipeListPage: 0,
+				numRecipesPerPage: 10,
+				numTotalRecipes: 10
 			};
 			return _this3;
 		}
 
 		_createClass(App, [{
 			key: 'loadRecipesFromServer',
-			value: function loadRecipesFromServer() {
+			value: function loadRecipesFromServer(pageNum) {
 				var _this4 = this;
 
+				var page = pageNum !== undefined ? pageNum : this.state.recipeListPage,
+				    startingRecipe = page * this.state.numRecipesPerPage,
+				    numRecipes = this.state.numRecipesPerPage;
+				console.log("ahsdaoksjdlad", page);
 				$.ajax({
-					url: '/json/recipe_library.json',
+					url: '/recipes/get',
 					dataType: 'json',
+					data: {
+						startingRecipe: startingRecipe,
+						numRecipes: numRecipes
+					},
 					success: function (data) {
 						_this4.setState({
-							recipes: data
+							recipes: data.recipes,
+							numTotalRecipes: data.numTotalRecipes
 						});
 					}.bind(this),
 					error: function error(err) {
@@ -290,12 +310,14 @@
 		}, {
 			key: 'changePage',
 			value: function changePage(page) {
+				this.loadRecipesFromServer(0);
 				this.setState({
 					page: page,
 					editRecipeMode: false,
 					seeRecipeMode: false,
 					recipeFocused: {},
-					idRecipeFocused: null
+					idRecipeFocused: null,
+					recipeListPage: 0
 				});
 			}
 		}, {
@@ -357,6 +379,14 @@
 				});
 			}
 		}, {
+			key: 'changeRecipeListPage',
+			value: function changeRecipeListPage(page) {
+				this.loadRecipesFromServer(page);
+				this.setState({
+					recipeListPage: page
+				});
+			}
+		}, {
 			key: 'render',
 			value: function render() {
 				return _react2.default.createElement(
@@ -373,7 +403,11 @@
 						recipeFocused: this.state.recipeFocused,
 						idRecipeFocused: this.state.idRecipeFocused,
 						saveEditedRecipe: this.saveEditedRecipe.bind(this),
-						saveRecipe: this.saveRecipe.bind(this)
+						saveRecipe: this.saveRecipe.bind(this),
+						recipeListPage: this.state.recipeListPage,
+						numRecipesPerPage: this.state.numRecipesPerPage,
+						numTotalRecipes: this.state.numTotalRecipes,
+						changeRecipeListPage: this.changeRecipeListPage.bind(this)
 					})
 				);
 			}
@@ -20438,22 +20472,22 @@
 		_createClass(Page, [{
 			key: 'render',
 			value: function render() {
-				var stepNum = this.props.step;
-				switch (stepNum) {
-					case 1:
+				var stepName = this.props.stepName;
+				switch (stepName) {
+					case "welcome":
 						return _react2.default.createElement(_welcome2.default, null);
-					case 2:
+					case "basicinfo":
 						return _react2.default.createElement(_basicInfo2.default, {
 							basicInfo: this.props.recipe.basicInfo,
 							updaterProp: this.props.updaterProp
 						});
-					case 3:
+					case "ingredients":
 						return _react2.default.createElement(_ingredients2.default, {
 							ingredients: this.props.recipe.ingredients,
 							updaterProp: this.props.updaterProp,
 							modifyIngredientHandler: this.props.modifyIngredientHandler
 						});
-					case 4:
+					case "steps":
 						return _react2.default.createElement(_steps2.default, {
 							steps: this.props.recipe.steps,
 							updaterProp: this.props.updaterProp,
@@ -20479,18 +20513,13 @@
 
 			var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(AddRecipe).call(this, props));
 
-			var isEditRecipeMode = _this2.props.editRecipeMode;
-			var isSeeRecipeMode = _this2.props.seeRecipeMode;
-			var initialStep = 1;
-			if (isEditRecipeMode) {
-				initialStep = 2;
-			}
-			if (isSeeRecipeMode) {
-				initialStep = 5;
-			}
+			var initialStep = 0;
+			var stepsNames = ['welcome', 'basicinfo', 'ingredients', 'steps', 'review'];
+			_this2.stepsNames = stepsNames;
 			_this2.state = {
 				step: initialStep,
-				recipe: isEditRecipeMode || isSeeRecipeMode ? _this2.props.recipeFocused : {
+				stepName: stepsNames[initialStep],
+				recipe: {
 					basicInfo: {
 						name: "Pasta alla Carbonara",
 						duration: 40,
@@ -20513,8 +20542,10 @@
 		_createClass(AddRecipe, [{
 			key: 'changePageHandler',
 			value: function changePageHandler(page) {
+				var stepsNames = this.stepsNames;
 				this.setState({
-					step: page
+					step: page,
+					stepName: stepsNames[page]
 				});
 			}
 		}, {
@@ -20575,16 +20606,16 @@
 					'div',
 					null,
 					_react2.default.createElement(Page, {
-						step: this.state.step,
+						stepName: this.state.stepName,
 						recipe: this.state.recipe,
 						updaterProp: this.changePropRecipeHandler.bind(this),
 						modifyIngredientHandler: this.modifyIngredientHandler.bind(this),
 						modifyStepHandler: this.modifyStepHandler.bind(this),
-						saveEditedRecipe: this.props.saveEditedRecipe,
 						saveRecipeHandler: this.saveRecipeHandler.bind(this)
 					}),
 					_react2.default.createElement(_pagination2.default, {
 						step: this.state.step,
+						numSteps: this.stepsNames.length,
 						changePage: this.changePageHandler.bind(this)
 					})
 				);
@@ -20832,7 +20863,7 @@
 	 Form to add a new ingredient
 	 App>AddRecipe>Page>Ingredients
 	 Props:
-	 	addIngredient //Function. Passed from Ingredients. 
+	 	addIngredient //Function. Passed from Ingredients.
 	 					Adds the new ingredient
 	 
 	 */
@@ -20947,12 +20978,12 @@
 	 								Allows easy updating or deletion
 	 								of ingredient
 	 		changeModifyingState //Function. Passed from IngredientList
-	 								Used to show that we are modifying or 
+	 								Used to show that we are modifying or
 	 								we have finished modifying an ingredient.
 	 								It doesn't modify the ingredient
 	 		ingredient 	//Object. Ingredient that we are modifying
 	 								name and quantity
-	 		key //Equal than ingredientPos. Used as a requirement as this is 
+	 		key //Equal than ingredientPos. Used as a requirement as this is
 	 			going to be part of an array of elements
 	 	State:
 	 		name //new name that it is going to be asigned to the ingredient
@@ -21082,7 +21113,7 @@
 	  								Allows easy updating or deletion
 	  								of ingredient
 	  		changeModifyingState //Function. Passed from IngredientList
-	  								Used to show that we are modifying or 
+	  								Used to show that we are modifying or
 	  								we have finished modifying an ingredient.
 	  								It doesn't modify the ingredient
 	  */
@@ -21139,7 +21170,7 @@
 	 								we are modifying an ingredient
 	 								When we modify an ingredient
 	 		ingredientBeingModified //index on the ingredientList array
-	 								  of the ingredient being modifiyed				
+	 								  of the ingredient being modifiyed
 	 
 	 */
 
@@ -21196,38 +21227,57 @@
 							//We are not modifying anything
 							//Show lists with the modify and delete buttosn:
 							return _react2.default.createElement(
-								'li',
+								'tr',
 								{ key: index },
-								ingredient.quantity,
-								' of ',
-								ingredient.name,
-								_react2.default.createElement(ModifyIngredientBtns, {
-									ingredientPos: index,
-									modifyIngredientHandler: _this5.props.modifyIngredientHandler,
-									changeModifyingState: _this5.modifyingIngredient.bind(_this5)
-								})
+								_react2.default.createElement(
+									'td',
+									null,
+									ingredient.quantity ? ingredient.quantity + "of" : "",
+									' ',
+									ingredient.name
+								),
+								_react2.default.createElement(
+									'td',
+									null,
+									_react2.default.createElement(ModifyIngredientBtns, {
+										ingredientPos: index,
+										modifyIngredientHandler: _this5.props.modifyIngredientHandler,
+										changeModifyingState: _this5.modifyingIngredient.bind(_this5)
+									})
+								)
 							);
 						} else if (ingredientBeingModified !== index) {
 							//In case we are modifying an ingredient but
 							//not this one.
 							//Show ingredient without the modify and delete buttons
 							return _react2.default.createElement(
-								'li',
+								'tr',
 								{ key: index },
-								ingredient.quantity,
-								' of ',
-								ingredient.name
+								_react2.default.createElement(
+									'td',
+									null,
+									ingredient.quantity,
+									' of ',
+									ingredient.name
+								)
 							);
 						} else {
 							//Return for the ingredient we are modifying
 							//It is a form
-							return _react2.default.createElement(ModifyIngredientForm, {
-								ingredientPos: index,
-								modifyIngredientHandler: _this5.props.modifyIngredientHandler,
-								changeModifyingState: _this5.modifyingIngredient.bind(_this5),
-								ingredient: ingredient,
-								key: index
-							});
+							return _react2.default.createElement(
+								'tr',
+								{ key: index },
+								_react2.default.createElement(
+									'td',
+									null,
+									_react2.default.createElement(ModifyIngredientForm, {
+										ingredientPos: index,
+										modifyIngredientHandler: _this5.props.modifyIngredientHandler,
+										changeModifyingState: _this5.modifyingIngredient.bind(_this5),
+										ingredient: ingredient
+									})
+								)
+							);
 						}
 					});
 					//Now that we have the array containing the return for each
@@ -21241,9 +21291,13 @@
 							'List of ingredients added:'
 						),
 						_react2.default.createElement(
-							'ul',
+							'table',
 							{ className: 'ingredientNameDiv' },
-							ingredientRows
+							_react2.default.createElement(
+								'tbody',
+								null,
+								ingredientRows
+							)
 						)
 					);
 				} else {
@@ -21275,12 +21329,12 @@
 	 			Ingredients
 	 Props:
 	 	ingredients //List of ingredients
-	 	updaterProp	//Function. Recive name and prop and updates that name 
+	 	updaterProp	//Function. Recive name and prop and updates that name
 	 					on the recipe object. On Ingredients, this
 	 					function will be used to update the ingredients
-	 					properties with new additions, modifications or 
+	 					properties with new additions, modifications or
 	 					deletions of the recipe ingredients list
-	 	modifyIngredientHandler //Function used for the modification or 
+	 	modifyIngredientHandler //Function used for the modification or
 	 								deletion of a single ingredient.
 	 								Easier than the previous one
 	 State:
@@ -21679,7 +21733,7 @@
 		_inherits(StepsList, _React$Component5);
 
 		/*
-	 	Shows list of added steps with buttons to change the order, 
+	 	Shows list of added steps with buttons to change the order,
 	 	modify a step or delating
 	 	App>AddRecipe>Pages>Steps>StepList
 	 	Props:
@@ -21759,32 +21813,40 @@
 					var isStepSetToModify = _this6.state.modifyingStep && _this6.state.stepBeingModified === index;
 					if (isStepSetToModify) {
 						return _react2.default.createElement(
-							'div',
+							'tr',
 							{ key: index },
-							_react2.default.createElement(ModifyStepForm, {
-								step: step,
-								stepPos: index,
-								modifyStepHandler: _this6.props.modifyStepHandler,
-								changeModifyingState: _this6.changeModifyingState.bind(_this6)
-							})
+							_react2.default.createElement(
+								'td',
+								null,
+								_react2.default.createElement(ModifyStepForm, {
+									step: step,
+									stepPos: index,
+									modifyStepHandler: _this6.props.modifyStepHandler,
+									changeModifyingState: _this6.changeModifyingState.bind(_this6)
+								})
+							)
 						);
 					} else {
 						return _react2.default.createElement(
-							'li',
+							'tr',
 							{ key: index },
 							_react2.default.createElement(
-								'span',
-								{ className: 'orderList' },
-								index + 1,
-								'. '
+								'td',
+								null,
+								_react2.default.createElement(
+									'span',
+									{ className: 'orderList' },
+									index + 1,
+									'. '
+								),
+								_react2.default.createElement(
+									'span',
+									{ className: 'stepTextSpan' },
+									step.text
+								)
 							),
 							_react2.default.createElement(
-								'span',
-								{ className: 'stepTextSpan' },
-								step.text
-							),
-							_react2.default.createElement(
-								'div',
+								'td',
 								{ className: 'btn-group stepAllBtns' },
 								_react2.default.createElement(MoveUpDownBtns, {
 									stepPos: index,
@@ -21806,9 +21868,13 @@
 						'div',
 						{ className: 'stepsList' },
 						_react2.default.createElement(
-							'ul',
+							'table',
 							{ ref: 'listSteps' },
-							stepRows
+							_react2.default.createElement(
+								'tbody',
+								null,
+								stepRows
+							)
 						)
 					);
 				} else {
@@ -21927,8 +21993,6 @@
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-	var numSteps = 5;
-
 	var Pagination = function (_React$Component) {
 		_inherits(Pagination, _React$Component);
 
@@ -21952,7 +22016,7 @@
 			key: 'render',
 			value: function render() {
 				var step = this.props.step;
-				if (step < numSteps && step > 1) {
+				if (step < this.props.numSteps - 1 && step > 0) {
 					return _react2.default.createElement(
 						'div',
 						{ 'class': 'Pagination' },
@@ -21981,7 +22045,7 @@
 							)
 						)
 					);
-				} else if (step > 1) {
+				} else if (step > 0) {
 					//but >= than numSteps
 					//Solo previous
 					return _react2.default.createElement(
@@ -21997,7 +22061,7 @@
 							'Previous'
 						)
 					);
-				} else if (step < numSteps) {
+				} else if (step < this.props.numSteps) {
 					//but <= 0
 					//Solo next
 					return _react2.default.createElement(
@@ -22188,7 +22252,7 @@
 							'tbody',
 							null,
 							_react2.default.createElement(ABasicInfo, { nameinfo: 'Recipe Name', info: basicInfo.name }),
-							_react2.default.createElement(ABasicInfo, { nameinfo: 'Duration', info: basicInfo.duration + "min" }),
+							_react2.default.createElement(ABasicInfo, { nameinfo: 'Duration', info: basicInfo.duration }),
 							_react2.default.createElement(ABasicInfo, { nameinfo: 'Dificulty Level', info: basicInfo.difficulty + "/5" }),
 							_react2.default.createElement(ABasicInfo, { nameinfo: 'Number of plates', info: basicInfo.numPlates })
 						)
@@ -22219,8 +22283,7 @@
 						_react2.default.createElement(
 							'td',
 							null,
-							ingredient.quantity,
-							' of ',
+							ingredient.quantity ? ingredient.quantity + " of" : "",
 							ingredient.name
 						)
 					);
@@ -22335,6 +22398,228 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(33);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	var _basicInfo = __webpack_require__(169);
+
+	var _basicInfo2 = _interopRequireDefault(_basicInfo);
+
+	var _ingredients = __webpack_require__(170);
+
+	var _ingredients2 = _interopRequireDefault(_ingredients);
+
+	var _steps = __webpack_require__(171);
+
+	var _steps2 = _interopRequireDefault(_steps);
+
+	var _pagination = __webpack_require__(172);
+
+	var _pagination2 = _interopRequireDefault(_pagination);
+
+	var _review = __webpack_require__(173);
+
+	var _review2 = _interopRequireDefault(_review);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	/*
+		App
+			Add Recipe
+				Page
+					switch(step){//Depending on the step
+						0: Welcome //Introductory test to start
+						1: BasicInfo //Sets:
+							Name
+							Difficulty of the recipe
+							Duration
+							Num of plates
+						2: Ingredients
+							IngredientsList
+								Ingredient
+									IngredientQuantity
+									IngredientName
+									Btns
+										ModifyBtn
+										DeleteBtn
+							AddIngredientForm
+
+
+
+					}
+				Pagination
+					//Contains the previous and the next buttons
+	*/
+
+	var Page = function (_React$Component) {
+		_inherits(Page, _React$Component);
+
+		function Page() {
+			_classCallCheck(this, Page);
+
+			return _possibleConstructorReturn(this, Object.getPrototypeOf(Page).apply(this, arguments));
+		}
+
+		_createClass(Page, [{
+			key: 'render',
+			value: function render() {
+				switch (this.props.stepName) {
+					case "welcome":
+						return _react2.default.createElement(Welcome, null);
+					case "basicinfo":
+						return _react2.default.createElement(_basicInfo2.default, {
+							basicInfo: this.props.recipe.basicInfo,
+							updaterProp: this.props.updaterProp
+						});
+					case "ingredients":
+						return _react2.default.createElement(_ingredients2.default, {
+							ingredients: this.props.recipe.ingredients,
+							updaterProp: this.props.updaterProp,
+							modifyIngredientHandler: this.props.modifyIngredientHandler
+						});
+					case "steps":
+						return _react2.default.createElement(_steps2.default, {
+							steps: this.props.recipe.steps,
+							updaterProp: this.props.updaterProp,
+							modifyStepHandler: this.props.modifyStepHandler
+						});
+					default:
+						return _react2.default.createElement(_review2.default, {
+							recipe: this.props.recipe,
+							saveRecipeHandler: this.props.saveRecipeHandler
+						});
+				}
+			}
+		}]);
+
+		return Page;
+	}(_react2.default.Component);
+
+	var EditRecipe = function (_React$Component2) {
+		_inherits(EditRecipe, _React$Component2);
+
+		function EditRecipe(props) {
+			_classCallCheck(this, EditRecipe);
+
+			var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(EditRecipe).call(this, props));
+
+			var initialStep = 0;
+			var stepsNames = ['basicinfo', 'ingredients', 'steps', 'review'];
+			_this2.stepsNames = stepsNames;
+			_this2.state = {
+				step: initialStep,
+				stepName: stepsNames[initialStep],
+				recipe: _this2.props.recipeFocused
+			};
+			return _this2;
+		}
+
+		_createClass(EditRecipe, [{
+			key: 'changePageHandler',
+			value: function changePageHandler(page) {
+				var stepsNames = this.stepsNames;
+				this.setState({
+					step: page,
+					stepName: stepsNames[page]
+				});
+			}
+		}, {
+			key: 'changePropRecipeHandler',
+			value: function changePropRecipeHandler(obj) {
+				var newRecipe = this.state.recipe;
+				newRecipe[obj.name] = obj.value;
+				console.log(newRecipe);
+				this.setState({
+					recipe: newRecipe
+				});
+			}
+		}, {
+			key: 'modifyIngredientHandler',
+			value: function modifyIngredientHandler(key, newValue) {
+				var recipe = this.state.recipe;
+				if (newValue === undefined) {
+					//Delete ingredient
+					recipe.ingredients.splice(key, 1);
+				} else {
+					//Modify ingredient
+					recipe.ingredients[key] = newValue;
+				}
+				this.setState({
+					'recipe': recipe
+				});
+			}
+		}, {
+			key: 'modifyStepHandler',
+			value: function modifyStepHandler(key, newValue) {
+				var recipe = this.state.recipe;
+				if (newValue === undefined) {
+					//Delete ingredient
+					recipe.steps.splice(key, 1);
+				} else {
+					//Modify ingredient s
+					recipe.steps[key] = newValue;
+				}
+				this.setState({
+					'recipe': recipe
+				});
+			}
+		}, {
+			key: 'saveRecipeHandler',
+			value: function saveRecipeHandler(recipe) {
+				var idRecipe = this.props.idRecipeFocused;
+				this.props.saveEditedRecipe(idRecipe, recipe);
+			}
+		}, {
+			key: 'render',
+			value: function render() {
+				return _react2.default.createElement(
+					'div',
+					null,
+					_react2.default.createElement(Page, {
+						stepName: this.state.stepName,
+						recipe: this.state.recipe,
+						updaterProp: this.changePropRecipeHandler.bind(this),
+						modifyIngredientHandler: this.modifyIngredientHandler.bind(this),
+						modifyStepHandler: this.modifyStepHandler.bind(this),
+						saveRecipeHandler: this.saveRecipeHandler.bind(this)
+					}),
+					_react2.default.createElement(_pagination2.default, {
+						step: this.state.step,
+						numSteps: this.stepsNames.length,
+						changePage: this.changePageHandler.bind(this)
+					})
+				);
+			}
+		}]);
+
+		return EditRecipe;
+	}(_react2.default.Component);
+
+	exports.default = EditRecipe;
+
+/***/ },
+/* 176 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
 
@@ -22349,6 +22634,8 @@
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -22438,21 +22725,33 @@
 
 	      var recipesNames = this.props.recipes.map(function (recipe, index) {
 	        return _react2.default.createElement(
-	          'li',
+	          'tr',
 	          { key: index },
-	          recipe.basicInfo.name,
-	          _react2.default.createElement(RecipeBtns, {
-	            idRecipe: index,
-	            seeRecipe: _this3.props.seeRecipe,
-	            deleteRecipe: _this3.props.deleteRecipe,
-	            editRecipe: _this3.props.editRecipe
-	          })
+	          _react2.default.createElement(
+	            'td',
+	            null,
+	            recipe.basicInfo.name
+	          ),
+	          _react2.default.createElement(
+	            'td',
+	            null,
+	            _react2.default.createElement(RecipeBtns, {
+	              idRecipe: index,
+	              seeRecipe: _this3.props.seeRecipe,
+	              deleteRecipe: _this3.props.deleteRecipe,
+	              editRecipe: _this3.props.editRecipe
+	            })
+	          )
 	        );
 	      });
 	      return _react2.default.createElement(
-	        'ul',
+	        'table',
 	        null,
-	        recipesNames
+	        _react2.default.createElement(
+	          'tbody',
+	          null,
+	          recipesNames
+	        )
 	      );
 	    }
 	  }]);
@@ -22460,8 +22759,73 @@
 	  return ListAllRecipes;
 	}(_react2.default.Component);
 
-	var AllRecipes = function (_React$Component3) {
-	  _inherits(AllRecipes, _React$Component3);
+	var RecipeListBtn = function (_React$Component3) {
+	  _inherits(RecipeListBtn, _React$Component3);
+
+	  function RecipeListBtn(props) {
+	    _classCallCheck(this, RecipeListBtn);
+
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(RecipeListBtn).call(this, props));
+	  }
+
+	  _createClass(RecipeListBtn, [{
+	    key: 'changeRecipePage',
+	    value: function changeRecipePage() {
+	      this.props.changeRecipeListPage(this.props.pageNum);
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+
+	      return _react2.default.createElement(
+	        'button',
+	        {
+	          className: this.props.btnOfActualPage ? "btn btn-default active" : "btn btn-default",
+	          onClick: this.changeRecipePage.bind(this)
+	        },
+	        this.props.pageNum
+	      );
+	    }
+	  }]);
+
+	  return RecipeListBtn;
+	}(_react2.default.Component);
+
+	var AllRecipesPagination = function (_React$Component4) {
+	  _inherits(AllRecipesPagination, _React$Component4);
+
+	  function AllRecipesPagination() {
+	    _classCallCheck(this, AllRecipesPagination);
+
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(AllRecipesPagination).apply(this, arguments));
+	  }
+
+	  _createClass(AllRecipesPagination, [{
+	    key: 'render',
+	    value: function render() {
+	      var _this6 = this;
+
+	      var numPages = Math.ceil(this.props.numTotalRecipes / this.props.numRecipesPerPage);
+	      var recipeListPagesBtns = [].concat(_toConsumableArray(Array(numPages))).map(function (val, idx) {
+	        return _react2.default.createElement(RecipeListBtn, {
+	          key: idx,
+	          pageNum: idx,
+	          btnOfActualPage: _this6.props.recipeListPage === idx,
+	          changeRecipeListPage: _this6.props.changeRecipeListPage });
+	      });
+	      return _react2.default.createElement(
+	        'div',
+	        { className: 'btn-group' },
+	        recipeListPagesBtns
+	      );
+	    }
+	  }]);
+
+	  return AllRecipesPagination;
+	}(_react2.default.Component);
+
+	var AllRecipes = function (_React$Component5) {
+	  _inherits(AllRecipes, _React$Component5);
 
 	  function AllRecipes(props) {
 	    _classCallCheck(this, AllRecipes);
@@ -22481,6 +22845,13 @@
 	          deleteRecipe: this.props.deleteRecipe,
 	          editRecipe: this.props.editRecipe,
 	          seeRecipe: this.props.seeRecipe
+	        }),
+	        _react2.default.createElement('hr', null),
+	        _react2.default.createElement(AllRecipesPagination, {
+	          recipeListPage: this.props.recipeListPage,
+	          numRecipesPerPage: this.props.numRecipesPerPage,
+	          numTotalRecipes: this.props.numTotalRecipes,
+	          changeRecipeListPage: this.props.changeRecipeListPage
 	        })
 	      );
 	    }
@@ -22492,7 +22863,7 @@
 	exports.default = AllRecipes;
 
 /***/ },
-/* 176 */
+/* 177 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

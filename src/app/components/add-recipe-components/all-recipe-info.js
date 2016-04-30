@@ -12,7 +12,7 @@ class ShowBasicInfo extends React.Component {
 				<table>
 					<tbody>
 						<ABasicInfo nameinfo="Recipe Name" info={basicInfo.name} />
-						<ABasicInfo nameinfo="Duration" info={basicInfo.duration + "min"} />
+						<ABasicInfo nameinfo="Duration" info={basicInfo.duration} />
 						<ABasicInfo nameinfo="Dificulty Level" info={basicInfo.difficulty + "/5"} />
 						<ABasicInfo nameinfo="Number of plates" info={basicInfo.numPlates} />
 					</tbody>
@@ -28,7 +28,10 @@ class ShowIngredients extends React.Component {
 			return (
 				<tr key={index}>
 					<td>
-						{ingredient.quantity} of {ingredient.name}
+						{(ingredient.quantity)?
+							ingredient.quantity + " of"
+							: ""}
+						{ingredient.name}
 					</td>
 				</tr>
 			);

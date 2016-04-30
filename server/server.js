@@ -39,7 +39,7 @@ var PATHS = {
 	recipejson: "./public/json/recipe_library.json",
 	deleteRecipe: "/recipes/delete",
 	addRecipe: "/recipes/add",
-	getAllRecipes: "/recipes/get",
+	getRecipes: "/recipes/get",
 	editRecipe: "/recipes/edit"
 };
 
@@ -54,6 +54,37 @@ app.use(_bodyParser2.default.json());
 
 //parses url files spliting the url in its different categoriesssss
 app.use(_bodyParser2.default.urlencoded({ extended: true }));
+
+app.get(PATHS.getRecipes, function (req, res) {
+	console.log("---------------");
+	console.log("Geting recipes");
+	_fs2.default.readFile(PATHS.recipejson, function (err, data) {
+		if (err) {
+			console.error(err);
+		}
+		var recipes = JSON.parse(data),
+		    numTotalRecipes = recipes.length,
+		    startingRecipe = Number(req.query.startingRecipe) || 0,
+		    numRecipes = Number(req.query.numRecipes || numTotalRecipes);
+
+		if (startingRecipe > numTotalRecipes) {
+			res.send("The starting point is higher than the total number of recipes");
+		} else {
+			var endingRecipe = startingRecipe + numRecipes,
+			    response = {
+				'numTotalRecipes': numTotalRecipes,
+				'nums': {
+					numRecipes: numRecipes,
+					endingRecipe: endingRecipe,
+					startingRecipe: startingRecipe
+				},
+				'recipes': recipes.slice(startingRecipe, endingRecipe)
+			};
+			console.log(req.query);
+			res.json(response);
+		}
+	});
+});
 
 app.post(PATHS.addRecipe, function (req, res) {
 	//Read the recipe_library.json file, add data to library

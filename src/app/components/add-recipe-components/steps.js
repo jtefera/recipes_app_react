@@ -1,4 +1,4 @@
-import React from 'react' 
+import React from 'react'
 import ReactDOM from 'react-dom'
 
 class AddStepsForm extends React.Component {
@@ -34,15 +34,15 @@ class AddStepsForm extends React.Component {
 						<div className="form-group">
 						<label for="stepText">Describe next step:</label>
 						<input
-							ref="step" 
-							type="text" 
+							ref="step"
+							type="text"
 							value={this.state.text}
 							onChange={this.updateStep.bind(this)}
 							placeholder="Fry in a pan, chop the tomatoes, mix the eggs"
 							className="form-control input-lg"
 						/>
-					</div> 
-					<button 
+					</div>
+					<button
 						onClick={this.addStep.bind(this)}
 						className="btn btn-info">
 						Add Step
@@ -80,7 +80,7 @@ class ModifyStepForm extends React.Component {
 		let modifyedStep = {
 			text: this.state.text
 		};
-		this.props.modifyStepHandler(	this.props.stepPos, 
+		this.props.modifyStepHandler(	this.props.stepPos,
 										modifyedStep);
 		this.props.changeModifyingState(false);
 	}
@@ -100,13 +100,13 @@ class ModifyStepForm extends React.Component {
 					placeholder="step description"
 				/>
 				<div className="btn-group btn-group-xs">
-					<button 
+					<button
 						className="btn btn-success"
 						onClick={this.saveModifications.bind(this)}
 						>
 							Save
 					</button>
-					<button 
+					<button
 						className="btn btn-warning"
 						onClick={this.cancelModifications.bind(this)}
 						>
@@ -114,7 +114,7 @@ class ModifyStepForm extends React.Component {
 					</button>
 				</div>
 				<hr />
-			</form>	
+			</form>
 		);
 	}
 }
@@ -137,8 +137,8 @@ class MoveUpDownBtns extends React.Component {
 					<button
 						className="btn btn-default  btn-group-xs"
 						onClick={this.moveUp.bind(this)}
-					> 
-						<icon 
+					>
+						<icon
 							className="glyphicon glyphicon-arrow-up"
 						/>
 					</button>
@@ -149,12 +149,12 @@ class MoveUpDownBtns extends React.Component {
 					<button
 						className="btn btn-default"
 						onClick={this.moveDown.bind(this)}
-					> 
+					>
 						<icon className="glyphicon glyphicon-arrow-down" />
 					</button>
 				</div>
 			),
-			btnUpDown = 
+			btnUpDown =
 				(<div className="btn-group  btn-group-xs">
 					{btnUp} {btnDown}
 				</div>);
@@ -186,12 +186,12 @@ class ModifyDeleteStepBtns extends React.Component {
 	render() {
 		return (
 			<div className="btn-group btn-group-xs">
-				<button 
+				<button
 					className="btn btn-default"
 					onClick={this.modifyStep.bind(this)}
 					>Modify</button>
-				<button 
-					className="btn btn-danger" 
+				<button
+					className="btn btn-danger"
 					onClick={this.deleteStep.bind(this)}>
 					Delete</button>
 			</div>
@@ -202,7 +202,7 @@ class ModifyDeleteStepBtns extends React.Component {
 //StepsList
 class StepsList extends React.Component {
 	/*
-		Shows list of added steps with buttons to change the order, 
+		Shows list of added steps with buttons to change the order,
 		modify a step or delating
 		App>AddRecipe>Pages>Steps>StepList
 		Props:
@@ -231,7 +231,7 @@ class StepsList extends React.Component {
 	move(key, pos) {
 		//Move up or down a step on the list of steps
 		//key indicates the step to move
-		//Pos, the number of pos to move. 
+		//Pos, the number of pos to move.
 		//If negative, the ingredient is moved up
 		//If positive, the ingredient is down.
 		//Called from childnodes
@@ -246,7 +246,7 @@ class StepsList extends React.Component {
 		});
 	}
 	changeModifyingState(isModifying, posModify){
-		//Function to be passed to childs to alert when a step 
+		//Function to be passed to childs to alert when a step
 		//is being modifyed.
 		//It doesn't modify a step
 		if(isModifying) {
@@ -262,29 +262,33 @@ class StepsList extends React.Component {
 		}
 	}
 	render() {
-		let stepList = this.props.stepList; 
-		
+		let stepList = this.props.stepList;
+
 		let stepRows = stepList.map( (step, index) => {
-			let isStepSetToModify = this.state.modifyingStep 
+			let isStepSetToModify = this.state.modifyingStep
 									&& (this.state.stepBeingModified === index);
 			if(isStepSetToModify){
 				return (
-					<div key={index}>
-						<ModifyStepForm 
-							step={step}
-							stepPos={index}
-							modifyStepHandler={this.props.modifyStepHandler}
-							changeModifyingState={this.changeModifyingState.bind(this)}
-						/>
-					</div>
+					<tr key={index}>
+						<td>
+							<ModifyStepForm
+								step={step}
+								stepPos={index}
+								modifyStepHandler={this.props.modifyStepHandler}
+								changeModifyingState={this.changeModifyingState.bind(this)}
+							/>
+						</td>
+					</tr>
 				);
 			} else {
 				return (
-					<li key={index}>
-						<span className="orderList">{index + 1}. </span>
-						<span className="stepTextSpan">{step.text}</span>
-						<div className="btn-group stepAllBtns">
-							<MoveUpDownBtns 
+					<tr key={index}>
+						<td>
+							<span className="orderList">{index + 1}. </span>
+							<span className="stepTextSpan">{step.text}</span>
+						</td>
+						<td className="btn-group stepAllBtns">
+							<MoveUpDownBtns
 								stepPos={index}
 								moveHandler={this.move.bind(this)}
 								numSteps={stepList.length}
@@ -294,8 +298,8 @@ class StepsList extends React.Component {
 								changeModifyingState={this.changeModifyingState.bind(this)}
 								modifyStepHandler={this.props.modifyStepHandler}
 							/>
-						</div>
-					</li>
+						</td>
+					</tr>
 				);
 			}
 		});
@@ -304,11 +308,13 @@ class StepsList extends React.Component {
 		if(this.props.stepList.length){
 			return (
 				<div className="stepsList">
-					<ul ref="listSteps">
+					<table ref="listSteps">
+						<tbody>
 							{stepRows}
-					</ul>
+						</tbody>
+					</table>
 				</div>
-			);	
+			);
 		} else {
 			return (
 				<div className="stepsList">
@@ -316,7 +322,7 @@ class StepsList extends React.Component {
 				</div>
 			);
 		}
-	
+
 	}
 }
 class Steps extends React.Component {
@@ -342,7 +348,7 @@ class Steps extends React.Component {
 		this.state = {
 			steps: this.props.steps || []
 		}
-	} 
+	}
 
 	update() {
 		//Input control
@@ -366,7 +372,7 @@ class Steps extends React.Component {
 	render() {
 		return (
 			<div class="recipe-steps form slide">
-				<StepsList 
+				<StepsList
 					stepList={this.props.steps}
 					updaterProp={this.props.updaterProp}
 					modifyStepHandler={this.props.modifyStepHandler}

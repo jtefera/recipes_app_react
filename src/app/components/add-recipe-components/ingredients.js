@@ -1,4 +1,4 @@
-import React from 'react' 
+import React from 'react'
 import ReactDOM from 'react-dom'
 
 
@@ -7,7 +7,7 @@ class AddIngredientForm extends React.Component {
 	Form to add a new ingredient
 	App>AddRecipe>Page>Ingredients
 	Props:
-		addIngredient //Function. Passed from Ingredients. 
+		addIngredient //Function. Passed from Ingredients.
 						Adds the new ingredient
 
 	*/
@@ -47,8 +47,8 @@ class AddIngredientForm extends React.Component {
 				<div className="form-group">
 					<label for="ingredientName">Name of the ingredient:</label>
 					<input
-						ref="name" 
-						type="text" 
+						ref="name"
+						type="text"
 						value={this.state.name}
 						onChange={this.updateIngredient.bind(this)}
 						placeholder="Eg: Tomato, rice, chopped onions"
@@ -56,17 +56,17 @@ class AddIngredientForm extends React.Component {
 					/>
 				</div>
 				<div className="form-group">
-					<label for="quatity">Quantity</label> 
-					<input 
+					<label for="quatity">Quantity</label>
+					<input
 						ref="quantity"
-						type="text" 
+						type="text"
 						value={this.state.quantity}
 						onChange={this.updateIngredient.bind(this)}
 						placeholder="Eg: 1Kg, 1 glass, Half liter"
 						className="form-control input-lg"
 					/>
 				</div>
-				<button 
+				<button
 					onClick={this.addIngredient.bind(this)}
 					className="btn btn-info">
 					Add Ingredient!
@@ -88,12 +88,12 @@ class ModifyIngredientForm extends React.Component{
 									Allows easy updating or deletion
 									of ingredient
 			changeModifyingState //Function. Passed from IngredientList
-									Used to show that we are modifying or 
+									Used to show that we are modifying or
 									we have finished modifying an ingredient.
 									It doesn't modify the ingredient
 			ingredient 	//Object. Ingredient that we are modifying
 									name and quantity
-			key //Equal than ingredientPos. Used as a requirement as this is 
+			key //Equal than ingredientPos. Used as a requirement as this is
 				going to be part of an array of elements
 		State:
 			name //new name that it is going to be asigned to the ingredient
@@ -140,7 +140,7 @@ class ModifyIngredientForm extends React.Component{
 		return (
 			<form role="form">
 				<hr />
-				<input 
+				<input
 					ref="quantity"
 					type="text"
 					placeholder={ingredient.quantity}
@@ -148,7 +148,7 @@ class ModifyIngredientForm extends React.Component{
 					onChange={this.updateInputs.bind(this)}
 					className="quantityIngredientInput"
 					size="5"
-				/> of <input 
+				/> of <input
 					ref="name"
 					type="text"
 					placeholder={ingredient.name}
@@ -159,13 +159,13 @@ class ModifyIngredientForm extends React.Component{
 				/>
 				<br />
 				<div className="btn-group">
-					<button 
+					<button
 						className="btn btn-success"
 						onClick={this.saveModifications.bind(this)}
 						>
 							Save
 					</button>
-					<button 
+					<button
 						className="btn btn-warning"
 						onClick={this.cancelModifications.bind(this)}
 						>
@@ -188,7 +188,7 @@ class ModifyIngredientBtns extends React.Component {
 									Allows easy updating or deletion
 									of ingredient
 			changeModifyingState //Function. Passed from IngredientList
-									Used to show that we are modifying or 
+									Used to show that we are modifying or
 									we have finished modifying an ingredient.
 									It doesn't modify the ingredient
 	*/
@@ -203,12 +203,12 @@ class ModifyIngredientBtns extends React.Component {
 	render() {
 		return(
 			<div className="btn-group btn-group-xs">
-				<button 
+				<button
 					className="btn btn-default"
 					onClick={this.modifyIngredient.bind(this)}
 					>Modify</button>
-				<button 
-					className="btn btn-danger" 
+				<button
+					className="btn btn-danger"
 					onClick={this.deleteIngredient.bind(this)}>
 					Delete</button>
 			</div>
@@ -229,7 +229,7 @@ class IngredientsList extends React.Component {
 									we are modifying an ingredient
 									When we modify an ingredient
 			ingredientBeingModified //index on the ingredientList array
-									  of the ingredient being modifiyed				
+									  of the ingredient being modifiyed
 
 	*/
 	constructor(props) {
@@ -259,7 +259,7 @@ class IngredientsList extends React.Component {
 		if(this.props.ingredientList.length){
 			//Case there is at least 1 ingredient
 
-			//Array of react elements that represent each 
+			//Array of react elements that represent each
 			//ingredient as a list elemetn
 			let ingredientList = this.props.ingredientList;
 			let ingredientRows = ingredientList.map((ingredient, index) => {
@@ -272,38 +272,48 @@ class IngredientsList extends React.Component {
 					ingredientBeingModified = state.ingredientBeingModified;
 
 				if(!modifiyingAIngredient){
-					//We are not modifying anything 
+					//We are not modifying anything
 					//Show lists with the modify and delete buttosn:
 					return (
-						<li key={index}>
-							{ingredient.quantity} of {ingredient.name}
-							<ModifyIngredientBtns 
-								ingredientPos={index} 
-								modifyIngredientHandler={this.props.modifyIngredientHandler}
-								changeModifyingState={this.modifyingIngredient.bind(this)}
-							/>
-						</li>
+						<tr key={index}>
+							<td>
+								{(ingredient.quantity) ?
+									(ingredient.quantity + "of")
+									: ""
+								} {ingredient.name}
+							</td>
+							<td>
+								<ModifyIngredientBtns
+									ingredientPos={index}
+									modifyIngredientHandler={this.props.modifyIngredientHandler}
+									changeModifyingState={this.modifyingIngredient.bind(this)}
+								/>
+							</td>
+						</tr>
 					);
 				} else if(ingredientBeingModified !== index){
 					//In case we are modifying an ingredient but
 					//not this one.
 					//Show ingredient without the modify and delete buttons
 					return (
-						<li key={index}>
-							{ingredient.quantity} of {ingredient.name}
-						</li>
+						<tr key={index}>
+							<td>{ingredient.quantity} of {ingredient.name}</td>
+						</tr>
 					);
 				} else {
 					//Return for the ingredient we are modifying
 					//It is a form
 					return (
-						<ModifyIngredientForm 
-							ingredientPos={index}
-							modifyIngredientHandler={this.props.modifyIngredientHandler}
-							changeModifyingState={this.modifyingIngredient.bind(this)}
-							ingredient={ingredient}
-							key={index}
-						/>
+						<tr key={index}>
+							<td>
+								<ModifyIngredientForm
+									ingredientPos={index}
+									modifyIngredientHandler={this.props.modifyIngredientHandler}
+									changeModifyingState={this.modifyingIngredient.bind(this)}
+									ingredient={ingredient}
+								/>
+							</td>
+						</tr>
 					);
 				}
 			});
@@ -312,9 +322,11 @@ class IngredientsList extends React.Component {
 			return (
 				<div className="ingredientNameDiv">
 					<h3>List of ingredients added:</h3>
-					<ul className="ingredientNameDiv">
-						{ingredientRows}
-					</ul>
+					<table className="ingredientNameDiv">
+						<tbody>
+							{ingredientRows}
+						</tbody>
+					</table>
 				</div>
 			);
 		} else {
@@ -324,7 +336,7 @@ class IngredientsList extends React.Component {
 				<div className="ingredientNameDiv">
 					<h2>Ingredients! </h2>
 					Here we are going to add some ingredients to
-					our recipe. 
+					our recipe.
 				</div>
 			);
 		}
@@ -337,12 +349,12 @@ class Ingredients extends React.Component {
 				Ingredients
 	Props:
 		ingredients //List of ingredients
-		updaterProp	//Function. Recive name and prop and updates that name 
+		updaterProp	//Function. Recive name and prop and updates that name
 						on the recipe object. On Ingredients, this
 						function will be used to update the ingredients
-						properties with new additions, modifications or 
+						properties with new additions, modifications or
 						deletions of the recipe ingredients list
-		modifyIngredientHandler //Function used for the modification or 
+		modifyIngredientHandler //Function used for the modification or
 									deletion of a single ingredient.
 									Easier than the previous one
 	State:
@@ -361,7 +373,7 @@ class Ingredients extends React.Component {
 		this.state = {
 			ingredients: this.props.ingredients || []
 		}
-	} 
+	}
 
 	update() {
 		//Updates the ingredients of this component into the
@@ -386,8 +398,8 @@ class Ingredients extends React.Component {
 	render() {
 		return (
 			<div class="recipe-ingredients form slide">
-				<IngredientsList 
-					ingredientList={this.props.ingredients} 
+				<IngredientsList
+					ingredientList={this.props.ingredients}
 					modifyIngredientHandler={this.props.modifyIngredientHandler}/>
 				<hr />
 				<AddIngredientForm addIngredient={this.addIngredientHandler.bind(this)}/>

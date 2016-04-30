@@ -4,6 +4,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import AddRecipe from './components/AddRecipe'
+import EditRecipe from './components/EditRecipe'
 import AllRecipes from './components/AllRecipes'
 import SeeRecipe from './components/SeeRecipe'
 /*
@@ -23,24 +24,24 @@ class MenuBar extends React.Component {
 	render() {
 		return (
 			<div className="menuBar">
-			<ul className = "nav nav-pills">
-				 <li className = "active">
-				 		<button
-								className="btn navbar-btn btn-default"
-								value="allrecipes"
-								onClick={this.changePage.bind(this)}>
-									Recipes
-						</button>
-					</li>
-				 <li>
-				 		<button
-								className="btn navbar-btn btn-default"
-								value="addrecipe"
-								onClick={this.changePage.bind(this)}>
-									Add Recipe
-						</button>
-					</li>
-			</ul>
+				<ul className = "nav nav-pills">
+					 <li className = "active">
+					 		<button
+									className="btn navbar-btn btn-default"
+									value="allrecipes"
+									onClick={this.changePage.bind(this)}>
+										Recipes
+							</button>
+						</li>
+					 <li>
+					 		<button
+									className="btn navbar-btn btn-default"
+									value="addrecipe"
+									onClick={this.changePage.bind(this)}>
+										Add Recipe
+							</button>
+						</li>
+				</ul>
 			</div>
 		);
 	}
@@ -58,6 +59,10 @@ class AppPage extends React.Component {
 							deleteRecipe={this.props.deleteRecipe}
 							recipes={this.props.recipes}
 							saveRecipe={this.props.saveRecipe}
+							recipeListPage={this.props.recipeListPage}
+							numRecipesPerPage={this.props.numRecipesPerPage}
+							numTotalRecipes={this.props.numTotalRecipes}
+							changeRecipeListPage={this.props.changeRecipeListPage}
 						/>
 					);
 				break;
@@ -70,7 +75,7 @@ class AppPage extends React.Component {
 				break;
 			case "editpage":
 				return (
-					<AddRecipe
+					<EditRecipe
 						editRecipeMode={this.props.editRecipeMode}
 						recipeFocused={this.props.recipeFocused}
 						saveEditedRecipe={this.props.saveEditedRecipe}
@@ -103,15 +108,30 @@ class App extends React.Component {
 			seeRecipeMode: false,
 			recipeFocused: {},
 			idRecipeFocused: null,
+			recipeListPage: 0,
+			numRecipesPerPage: 10,
+			numTotalRecipes: 10
 		};
 	}
-	loadRecipesFromServer(){
+	loadRecipesFromServer(pageNum){
+		let page = (pageNum !== undefined)
+								? pageNum
+								:this.state.recipeListPage,
+
+		 		startingRecipe = page*this.state.numRecipesPerPage,
+				numRecipes = this.state.numRecipesPerPage;
+				console.log("ahsdaoksjdlad", page);
     $.ajax({
-      url: '/json/recipe_library.json',
+      url: '/recipes/get',
       dataType: 'json',
+			data: {
+				startingRecipe: startingRecipe,
+				numRecipes: numRecipes
+			},
       success: ((data) => {
         this.setState({
-          recipes: data
+          recipes: data.recipes,
+					numTotalRecipes: data.numTotalRecipes
         });
       }).bind(this),
       error: (err) => {
@@ -147,12 +167,14 @@ class App extends React.Component {
     })
   }
 	changePage(page) {
+		this.loadRecipesFromServer(0);
 		this.setState({
 			page: page,
 			editRecipeMode: false,
 			seeRecipeMode: false,
 			recipeFocused: {},
 			idRecipeFocused: null,
+			recipeListPage: 0
 		});
 	}
 	editRecipe(indexRecipe) {
@@ -203,6 +225,12 @@ class App extends React.Component {
 			}).bind(this)
 		});
 	}
+	changeRecipeListPage(page) {
+		this.loadRecipesFromServer(page);
+		this.setState({
+			recipeListPage: page
+		});
+	}
 	render() {
 		return (
 			<div>
@@ -218,6 +246,10 @@ class App extends React.Component {
 					idRecipeFocused={this.state.idRecipeFocused}
 					saveEditedRecipe={this.saveEditedRecipe.bind(this)}
 					saveRecipe={this.saveRecipe.bind(this)}
+					recipeListPage={this.state.recipeListPage}
+					numRecipesPerPage={this.state.numRecipesPerPage}
+					numTotalRecipes={this.state.numTotalRecipes}
+					changeRecipeListPage={this.changeRecipeListPage.bind(this)}
 				/>
 			</div>
 		);

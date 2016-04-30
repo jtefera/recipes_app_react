@@ -46,21 +46,70 @@ class ListAllRecipes extends React.Component {
   render() {
     let recipesNames = this.props.recipes.map((recipe, index) => {
       return (
-        <li key={index}>
-          {recipe.basicInfo.name}
-          <RecipeBtns
-            idRecipe={index}
-            seeRecipe={this.props.seeRecipe}
-            deleteRecipe={this.props.deleteRecipe}
-            editRecipe={this.props.editRecipe}
-          />
-        </li>
+        <tr key={index}>
+          <td>
+            {recipe.basicInfo.name}
+          </td>
+          <td>
+            <RecipeBtns
+              idRecipe={index}
+              seeRecipe={this.props.seeRecipe}
+              deleteRecipe={this.props.deleteRecipe}
+              editRecipe={this.props.editRecipe}
+            />
+          </td>
+        </tr>
       );
     });
     return (
-      <ul>
-        {recipesNames}
-      </ul>
+      <table>
+        <tbody>
+          {recipesNames}
+        </tbody>
+      </table>
+    );
+  }
+}
+
+class RecipeListBtn extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+  changeRecipePage() {
+    this.props.changeRecipeListPage(this.props.pageNum)
+  }
+  render() {
+
+    return (
+      <button
+        className={this.props.btnOfActualPage?
+          "btn btn-default active"
+          :"btn btn-default"
+        }
+        onClick={this.changeRecipePage.bind(this)}
+      >
+          {this.props.pageNum }
+      </button>
+    )
+  }
+}
+
+class AllRecipesPagination extends React.Component {
+  render() {
+    let numPages = Math.ceil(this.props.numTotalRecipes/this.props.numRecipesPerPage);
+    let recipeListPagesBtns = [... Array(numPages)].map((val, idx) => {
+      return (
+        <RecipeListBtn
+          key={idx}
+          pageNum={idx}
+          btnOfActualPage={this.props.recipeListPage === idx}
+          changeRecipeListPage={this.props.changeRecipeListPage}/>
+      );
+    });
+    return (
+      <div className="btn-group">
+        {recipeListPagesBtns}
+      </div>
     );
   }
 }
@@ -79,6 +128,13 @@ class AllRecipes extends React.Component {
             deleteRecipe={this.props.deleteRecipe}
             editRecipe={this.props.editRecipe}
             seeRecipe={this.props.seeRecipe}
+        />
+        <hr />
+        <AllRecipesPagination
+          recipeListPage={this.props.recipeListPage}
+          numRecipesPerPage={this.props.numRecipesPerPage}
+          numTotalRecipes={this.props.numTotalRecipes}
+          changeRecipeListPage={this.props.changeRecipeListPage}
         />
       </div>
     );

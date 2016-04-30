@@ -1,7 +1,6 @@
-import React from 'react' 
+import React from 'react'
 import ReactDOM from 'react-dom'
 
-var numSteps = 5;
 class Pagination extends React.Component {
 	constructor(props) {
 		super(props);
@@ -14,20 +13,20 @@ class Pagination extends React.Component {
 	}
 	render() {
 		var step = this.props.step;
-		if(step < numSteps && step>1) {
+		if(step < (this.props.numSteps-1) && step>0) {
 			return (
 				<div class="Pagination">
 					<hr />
 					<div className="btn-group btn-group-lg">
-						<button 
-							id="previousBut" 
+						<button
+							id="previousBut"
 							type="button"
 							onClick={this.prevPageHandler.bind(this)}
 							className="btn btn-warning">
 								Previous
 						</button>
-						<button 
-							id="nextBut" 
+						<button
+							id="nextBut"
 							type="button"
 							onClick={this.nextPageHandler.bind(this)}
 							className="btn btn-success"
@@ -37,28 +36,28 @@ class Pagination extends React.Component {
 					</div>
 				</div>
 			);
-		} else if(step>1) {
+		} else if(step>0) {
 			//but >= than numSteps
 			//Solo previous
 			return (
 				<div class="Pagination">
 					<hr />
-					<button 
-						id="previousBut" 
+					<button
+						id="previousBut"
 						onClick={this.prevPageHandler.bind(this)}
 						className="btn btn-warning btn-lg">
 							Previous
 					</button>
 				</div>
 			);
-		} else if(step < numSteps) {
+		} else if(step < this.props.numSteps) {
 			//but <= 0
 			//Solo next
 			return (
 				<div class="Pagination">
 					<hr />
-					<button 
-						id="nextBut" 
+					<button
+						id="nextBut"
 						onClick={this.nextPageHandler.bind(this)}
 						className="btn btn-success btn-lg">
 							Next
@@ -68,7 +67,7 @@ class Pagination extends React.Component {
 		}
 		return (
 			<div class="Pagination">
-				
+
 			</div>
 		)
 	}

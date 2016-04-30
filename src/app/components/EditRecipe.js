@@ -1,10 +1,6 @@
-//Main component of the  recipeApp
-// import is the new way of doing require('react')
-//This will do with the creation of a new recipe
 import React from 'react'
 import ReactDOM from 'react-dom'
 
-import Welcome from './add-recipe-components/welcome'
 import BasicInfo from './add-recipe-components/basic-info'
 import Ingredients from './add-recipe-components/ingredients'
 import Steps from './add-recipe-components/steps'
@@ -39,12 +35,9 @@ import Review from './add-recipe-components/review'
 				//Contains the previous and the next buttons
 */
 
-var numSteps = 5;
-
 class Page extends React.Component {
 	render() {
-		var stepName = this.props.stepName;
-		switch(stepName) {
+		switch(this.props.stepName) {
 			case "welcome":
 				return (
 					<Welcome />
@@ -72,7 +65,7 @@ class Page extends React.Component {
 						modifyStepHandler={this.props.modifyStepHandler}
 					/>
 				);
-			default:
+      default:
 				return (
 					<Review
 						recipe={this.props.recipe}
@@ -84,46 +77,23 @@ class Page extends React.Component {
 }
 
 
-class AddRecipe extends React.Component {
+class EditRecipe extends React.Component {
 	constructor(props) {
 		super(props);
 		var initialStep = 0;
-		var stepsNames = ['welcome', 'basicinfo', 'ingredients', 'steps', 'review'];
-		this.stepsNames = stepsNames;
+    var stepsNames = ['basicinfo', 'ingredients', 'steps', 'review'];
+    this.stepsNames = stepsNames;
 		this.state = {
 			step: initialStep,
-			stepName: stepsNames[initialStep],
-			recipe: {
-								basicInfo: {
-									name: "Pasta alla Carbonara",
-									duration: 40,
-									difficulty: 3,
-									numPlates: 3
-								},
-								ingredients: [
-									{
-										name: "Tomate",
-										quantity: "2kg"
-									},
-									{
-										name: "Pasta",
-										quantity: "500gr"
-									}
-								],
-								steps: [
-									{text: "Chop the onions"},
-									{text: "Heat the oil"},
-									{text: "Fry the onions"},
-									{text: "Add the tomatoes"}
-								]
-							}
+      stepName: stepsNames[initialStep],
+			recipe: this.props.recipeFocused
 		};
 	}
 	changePageHandler(page) {
-		let stepsNames = this.stepsNames;
+    let stepsNames = this.stepsNames;
 		this.setState({
 			step: page,
-			stepName: stepsNames[page]
+      stepName: stepsNames[page]
 		})
 	}
 	changePropRecipeHandler(obj) {
@@ -162,12 +132,7 @@ class AddRecipe extends React.Component {
 	}
 	saveRecipeHandler(recipe) {
 		let idRecipe = this.props.idRecipeFocused;
-		console.log(this.props);
-		if(this.props.editRecipeMode){
-			this.props.saveEditedRecipe(idRecipe, recipe);
-		} else {
-			this.props.saveRecipe(recipe);
-		}
+	  this.props.saveEditedRecipe(idRecipe, recipe);
 	}
 	render() {
 		return (
@@ -182,7 +147,7 @@ class AddRecipe extends React.Component {
 				/>
 				<Pagination
 					step={this.state.step}
-					numSteps={this.stepsNames.length}
+          numSteps={this.stepsNames.length}
 					changePage={this.changePageHandler.bind(this)}
 				/>
 			</div>
@@ -190,4 +155,4 @@ class AddRecipe extends React.Component {
 	}
 }
 
-export default AddRecipe
+export default EditRecipe

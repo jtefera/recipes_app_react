@@ -15,7 +15,7 @@ const PATHS = {
 	recipejson: "./public/json/recipe_library.json",
 	deleteRecipe: "/recipes/delete",
 	addRecipe: "/recipes/add",
-	getAllRecipes: "/recipes/get",
+	getRecipes: "/recipes/get",
 	editRecipe: "/recipes/edit"
 };
 
@@ -30,6 +30,38 @@ app.use(bodyParser.json());
 
 //parses url files spliting the url in its different categoriesssss
 app.use(bodyParser.urlencoded({extended: true}));
+
+app.get(PATHS.getRecipes, (req, res) => {
+	console.log("---------------");
+	console.log("Geting recipes")
+	fs.readFile(PATHS.recipejson, (err, data) => {
+		if(err){
+			console.error(err);
+		}
+		let recipes = JSON.parse(data),
+				numTotalRecipes = recipes.length,
+				startingRecipe = Number(req.query.startingRecipe) || 0,
+				numRecipes = Number(req.query.numRecipes || numTotalRecipes);
+
+		if(startingRecipe > numTotalRecipes) {
+			res.send("The starting point is higher than the total number of recipes");
+		} else {
+			let endingRecipe = startingRecipe + numRecipes,
+					response = {
+						'numTotalRecipes': numTotalRecipes,
+						'nums': {
+							numRecipes,
+							endingRecipe,
+							startingRecipe
+						},
+						'recipes': recipes.slice(startingRecipe, endingRecipe)
+					};
+					console.log(req.query);
+			res.json(response);
+		}
+	});
+
+});
 
 app.post(PATHS.addRecipe, function(req, res){
 	//Read the recipe_library.json file, add data to library
