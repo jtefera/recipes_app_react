@@ -7,6 +7,7 @@ import AddRecipe from './components/AddRecipe'
 import EditRecipe from './components/EditRecipe'
 import AllRecipes from './components/AllRecipes'
 import SeeRecipe from './components/SeeRecipe'
+import SearchPage from './components/SearchPage'
 /*
 	App
 		Menu Bar
@@ -41,6 +42,14 @@ class MenuBar extends React.Component {
 										Add Recipe
 							</button>
 						</li>
+						<li>
+							 <button
+									 className="btn navbar-btn btn-default"
+									 value="searchpage"
+									 onClick={this.changePage.bind(this)}>
+										 Search
+							 </button>
+						 </li>
 				</ul>
 			</div>
 		);
@@ -87,6 +96,22 @@ class AppPage extends React.Component {
 				return (
 					<SeeRecipe
 						recipe={this.props.recipeFocused}
+					/>
+				);
+			break;
+			case "searchpage":
+				return (
+					<SearchPage
+						seeRecipe={this.props.seeRecipe}
+						editRecipe={this.props.editRecipe}
+						deleteRecipe={this.props.deleteRecipe}
+						recipes={this.props.recipes}
+						saveRecipe={this.props.saveRecipe}
+						recipeListPage={this.props.recipeListPage}
+						numRecipesPerPage={this.props.numRecipesPerPage}
+						numTotalRecipes={this.props.numTotalRecipes}
+						changeRecipeListPage={this.props.changeRecipeListPage}
+						searchRecipes={this.props.searchRecipes}
 					/>
 				);
 			break;
@@ -231,6 +256,26 @@ class App extends React.Component {
 			recipeListPage: page
 		});
 	}
+	searchRecipes(query) {
+		console.log("searchig ", query);
+		$.ajax({
+      url: '/recipes/search',
+      dataType: 'json',
+			data: {
+				'query': query
+			},
+      success: ((data) => {
+				console.log(data)
+        this.setState({
+          recipes: data,
+					numTotalRecipes: data.length
+        });
+      }).bind(this),
+      error: (err) => {
+        console.error(err);
+      }
+    });
+	}
 	render() {
 		return (
 			<div>
@@ -250,6 +295,7 @@ class App extends React.Component {
 					numRecipesPerPage={this.state.numRecipesPerPage}
 					numTotalRecipes={this.state.numTotalRecipes}
 					changeRecipeListPage={this.changeRecipeListPage.bind(this)}
+					searchRecipes={this.searchRecipes.bind(this)}
 				/>
 			</div>
 		);

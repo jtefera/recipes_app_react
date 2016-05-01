@@ -16,7 +16,8 @@ const PATHS = {
 	deleteRecipe: "/recipes/delete",
 	addRecipe: "/recipes/add",
 	getRecipes: "/recipes/get",
-	editRecipe: "/recipes/edit"
+	editRecipe: "/recipes/edit",
+	searchRecipes: "/recipes/search"
 };
 
 //logger
@@ -61,6 +62,42 @@ app.get(PATHS.getRecipes, (req, res) => {
 		}
 	});
 
+});
+
+app.get(PATHS.searchRecipes, (req, res) => {
+	fs.readFile(PATHS.recipejson, (err, data) => {
+		let arrayRecipesByNumber = [];
+		if(err) {
+			console.error(err);
+		}
+		let query = req.query.query.toLowerCase().trim(),
+				searchWords = query.split(" "),
+				recipes = JSON.parse(data),
+				recipesSearched = recipes.reduce((arrRecipesByRelevance, recipe) => {
+					let numWordsOnRecipe = searchWords.filter((word) => {
+						return recipe.basicInfo.name.toLowerCase().indexOf(word) !== -1;
+					}).length;
+					if(numWordsOnRecipe !== 0) {
+						let recipesWithThisRelevance = arrayRecipesByNumber[numWordsOnRecipe] || [];
+						recipesWithThisRelevance.push(recipe),
+						arrayRecipesByNumber[numWordsOnRecipe] = recipesWithThisRelevance;
+					}
+					return arrayRecipesByNumber;
+				}, [])
+				.reverse()
+				.filter((value) => {
+					return value; //filters null values
+				})
+				.reduce((concatenade, val) => concatenade.concat(val), []);
+				/*recipesSearched = recipes.filter((recipe) => {
+					let recipeName = recipe.basicInfo.name.toLowerCase();
+					return recipeName.indexOf(query) !== -1;
+				});*/
+		//console.log(query, recipesSearched);
+
+		res.json(recipesSearched);
+
+	});
 });
 
 app.post(PATHS.addRecipe, function(req, res){
