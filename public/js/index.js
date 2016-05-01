@@ -88,6 +88,10 @@
 
 	var _SeeRecipe2 = _interopRequireDefault(_SeeRecipe);
 
+	var _SearchPage = __webpack_require__(178);
+
+	var _SearchPage2 = _interopRequireDefault(_SearchPage);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -156,6 +160,18 @@
 									onClick: this.changePage.bind(this) },
 								'Add Recipe'
 							)
+						),
+						_react2.default.createElement(
+							'li',
+							null,
+							_react2.default.createElement(
+								'button',
+								{
+									className: 'btn navbar-btn btn-default',
+									value: 'searchpage',
+									onClick: this.changePage.bind(this) },
+								'Search'
+							)
 						)
 					)
 				);
@@ -208,6 +224,20 @@
 					case "seerecipe":
 						return _react2.default.createElement(_SeeRecipe2.default, {
 							recipe: this.props.recipeFocused
+						});
+						break;
+					case "searchpage":
+						return _react2.default.createElement(_SearchPage2.default, {
+							seeRecipe: this.props.seeRecipe,
+							editRecipe: this.props.editRecipe,
+							deleteRecipe: this.props.deleteRecipe,
+							recipes: this.props.recipes,
+							saveRecipe: this.props.saveRecipe,
+							recipeListPage: this.props.recipeListPage,
+							numRecipesPerPage: this.props.numRecipesPerPage,
+							numTotalRecipes: this.props.numTotalRecipes,
+							changeRecipeListPage: this.props.changeRecipeListPage,
+							searchRecipes: this.props.searchRecipes
 						});
 						break;
 					default:
@@ -387,6 +417,30 @@
 				});
 			}
 		}, {
+			key: 'searchRecipes',
+			value: function searchRecipes(query) {
+				var _this8 = this;
+
+				console.log("searchig ", query);
+				$.ajax({
+					url: '/recipes/search',
+					dataType: 'json',
+					data: {
+						'query': query
+					},
+					success: function (data) {
+						console.log(data);
+						_this8.setState({
+							recipes: data,
+							numTotalRecipes: data.length
+						});
+					}.bind(this),
+					error: function error(err) {
+						console.error(err);
+					}
+				});
+			}
+		}, {
 			key: 'render',
 			value: function render() {
 				return _react2.default.createElement(
@@ -407,7 +461,8 @@
 						recipeListPage: this.state.recipeListPage,
 						numRecipesPerPage: this.state.numRecipesPerPage,
 						numTotalRecipes: this.state.numTotalRecipes,
-						changeRecipeListPage: this.changeRecipeListPage.bind(this)
+						changeRecipeListPage: this.changeRecipeListPage.bind(this),
+						searchRecipes: this.searchRecipes.bind(this)
 					})
 				);
 			}
@@ -22918,6 +22973,121 @@
 	}(_react2.default.Component);
 
 	exports.default = SeeRecipe;
+
+/***/ },
+/* 178 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _react = __webpack_require__(2);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactDom = __webpack_require__(33);
+
+	var _reactDom2 = _interopRequireDefault(_reactDom);
+
+	var _AllRecipes = __webpack_require__(176);
+
+	var _AllRecipes2 = _interopRequireDefault(_AllRecipes);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var SearchInput = function (_React$Component) {
+	  _inherits(SearchInput, _React$Component);
+
+	  function SearchInput(props) {
+	    _classCallCheck(this, SearchInput);
+
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(SearchInput).call(this, props));
+
+	    _this.state = {
+	      value: ""
+	    };
+	    return _this;
+	  }
+
+	  _createClass(SearchInput, [{
+	    key: 'inputText',
+	    value: function inputText(e) {
+	      this.setState({
+	        value: e.target.value
+	      });
+	      this.props.searchRecipes(e.target.value);
+	    }
+	  }, {
+	    key: 'submitOnEnter',
+	    value: function submitOnEnter(e) {
+	      if (e.key == "Enter") {
+	        this.props.searchRecipes(e.target.value);
+	      }
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement('input', {
+	        type: 'text',
+	        placeholder: 'search name',
+	        value: this.state.value,
+	        onChange: this.inputText.bind(this),
+	        onKeyPress: this.submitOnEnter.bind(this)
+	      });
+	    }
+	  }]);
+
+	  return SearchInput;
+	}(_react2.default.Component);
+
+	var SearchPage = function (_React$Component2) {
+	  _inherits(SearchPage, _React$Component2);
+
+	  function SearchPage() {
+	    _classCallCheck(this, SearchPage);
+
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(SearchPage).apply(this, arguments));
+	  }
+
+	  _createClass(SearchPage, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement(SearchInput, {
+	          searchRecipes: this.props.searchRecipes
+	        }),
+	        _react2.default.createElement(_AllRecipes2.default, {
+	          seeRecipe: this.props.seeRecipe,
+	          editRecipe: this.props.editRecipe,
+	          deleteRecipe: this.props.deleteRecipe,
+	          recipes: this.props.recipes,
+	          saveRecipe: this.props.saveRecipe,
+	          recipeListPage: this.props.recipeListPage,
+	          numRecipesPerPage: this.props.numRecipesPerPage,
+	          numTotalRecipes: this.props.numTotalRecipes,
+	          changeRecipeListPage: this.props.changeRecipeListPage
+	        })
+	      );
+	    }
+	  }]);
+
+	  return SearchPage;
+	}(_react2.default.Component);
+
+	exports.default = SearchPage;
 
 /***/ }
 /******/ ]);

@@ -40,7 +40,8 @@ var PATHS = {
 	deleteRecipe: "/recipes/delete",
 	addRecipe: "/recipes/add",
 	getRecipes: "/recipes/get",
-	editRecipe: "/recipes/edit"
+	editRecipe: "/recipes/edit",
+	searchRecipes: "/recipes/search"
 };
 
 //logger
@@ -83,6 +84,39 @@ app.get(PATHS.getRecipes, function (req, res) {
 			console.log(req.query);
 			res.json(response);
 		}
+	});
+});
+
+app.get(PATHS.searchRecipes, function (req, res) {
+	_fs2.default.readFile(PATHS.recipejson, function (err, data) {
+		var arrayRecipesByNumber = [];
+		if (err) {
+			console.error(err);
+		}
+		var query = req.query.query.toLowerCase().trim(),
+		    searchWords = query.split(" "),
+		    recipes = JSON.parse(data),
+		    recipesSearched = recipes.reduce(function (arrRecipesByRelevance, recipe) {
+			var numWordsOnRecipe = searchWords.filter(function (word) {
+				return recipe.basicInfo.name.toLowerCase().indexOf(word) !== -1;
+			}).length;
+			if (numWordsOnRecipe !== 0) {
+				var recipesWithThisRelevance = arrayRecipesByNumber[numWordsOnRecipe] || [];
+				recipesWithThisRelevance.push(recipe), arrayRecipesByNumber[numWordsOnRecipe] = recipesWithThisRelevance;
+			}
+			return arrayRecipesByNumber;
+		}, []).reverse().filter(function (value) {
+			return value; //filters null values
+		}).reduce(function (concatenade, val) {
+			return concatenade.concat(val);
+		}, []);
+		/*recipesSearched = recipes.filter((recipe) => {
+  	let recipeName = recipe.basicInfo.name.toLowerCase();
+  	return recipeName.indexOf(query) !== -1;
+  });*/
+		//console.log(query, recipesSearched);
+
+		res.json(recipesSearched);
 	});
 });
 
