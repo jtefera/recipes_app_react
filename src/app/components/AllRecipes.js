@@ -44,6 +44,7 @@ class RecipeBtns extends React.Component {
 
 class ListAllRecipes extends React.Component {
   render() {
+    console.log("allreci", this.props.recipes);
     let recipesNames = this.props.recipes.map((recipe, index) => {
       return (
         <tr key={index}>

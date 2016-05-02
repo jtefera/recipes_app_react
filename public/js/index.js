@@ -124,6 +124,9 @@
 
 		_createClass(MenuBar, [{
 			key: 'changePage',
+
+			//Not being used.
+			//Second version of menubar
 			value: function changePage(e) {
 				e.preventDefault();
 				this.props.changePage(e.target.value);
@@ -181,8 +184,63 @@
 		return MenuBar;
 	}(_react2.default.Component);
 
-	var AppPage = function (_React$Component2) {
-		_inherits(AppPage, _React$Component2);
+	var NewMenuBar = function (_React$Component2) {
+		_inherits(NewMenuBar, _React$Component2);
+
+		function NewMenuBar(props) {
+			_classCallCheck(this, NewMenuBar);
+
+			var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(NewMenuBar).call(this, props));
+
+			_this2.state = {
+				inputValue: ""
+			};
+			return _this2;
+		}
+
+		_createClass(NewMenuBar, [{
+			key: 'searchRecipes',
+			value: function searchRecipes(e) {
+				this.setState({
+					inputValue: e.target.value
+				});
+				this.props.searchRecipes(e.target.value);
+			}
+		}, {
+			key: 'addRecipe',
+			value: function addRecipe(e) {
+				e.preventDefault();
+				this.props.changePage("addrecipe");
+			}
+		}, {
+			key: 'render',
+			value: function render() {
+				return _react2.default.createElement(
+					'div',
+					{ className: 'newmenubar' },
+					_react2.default.createElement('input', { className: 'input-lg',
+						type: 'text',
+						placeholder: 'search',
+						onChange: this.searchRecipes.bind(this),
+						value: this.state.inputValue
+					}),
+					_react2.default.createElement('br', null),
+					_react2.default.createElement(
+						'a',
+						{ href: '#',
+							onClick: this.addRecipe.bind(this)
+						},
+						'Add recipe'
+					)
+				);
+			}
+		}]);
+
+		return NewMenuBar;
+	}(_react2.default.Component);
+
+	var AppPage = function (_React$Component3) {
+		_inherits(AppPage, _React$Component3);
 
 		function AppPage() {
 			_classCallCheck(this, AppPage);
@@ -253,15 +311,15 @@
 		return AppPage;
 	}(_react2.default.Component);
 
-	var App = function (_React$Component3) {
-		_inherits(App, _React$Component3);
+	var App = function (_React$Component4) {
+		_inherits(App, _React$Component4);
 
 		function App(props) {
 			_classCallCheck(this, App);
 
-			var _this3 = _possibleConstructorReturn(this, Object.getPrototypeOf(App).call(this, props));
+			var _this4 = _possibleConstructorReturn(this, Object.getPrototypeOf(App).call(this, props));
 
-			_this3.state = {
+			_this4.state = {
 				page: "allrecipes",
 				recipes: [],
 				editRecipeMode: false,
@@ -270,31 +328,36 @@
 				idRecipeFocused: null,
 				recipeListPage: 0,
 				numRecipesPerPage: 10,
-				numTotalRecipes: 10
+				numTotalRecipes: 10,
+				query: ""
 			};
-			return _this3;
+			return _this4;
 		}
 
 		_createClass(App, [{
 			key: 'loadRecipesFromServer',
-			value: function loadRecipesFromServer(pageNum) {
-				var _this4 = this;
+			value: function loadRecipesFromServer(pageNum, searchQuery) {
+				var _this5 = this;
 
 				var page = pageNum !== undefined ? pageNum : this.state.recipeListPage,
 				    startingRecipe = page * this.state.numRecipesPerPage,
-				    numRecipes = this.state.numRecipesPerPage;
-				console.log("ahsdaoksjdlad", page);
+				    numRecipes = this.state.numRecipesPerPage,
+				    query = searchQuery || this.state.query;
+				console.log("loading ", query);
 				$.ajax({
-					url: '/recipes/get',
+					url: '/recipes/search',
 					dataType: 'json',
 					data: {
 						startingRecipe: startingRecipe,
-						numRecipes: numRecipes
+						numRecipes: numRecipes,
+						query: query
 					},
 					success: function (data) {
-						_this4.setState({
+						//console.log(data);
+						_this5.setState({
 							recipes: data.recipes,
-							numTotalRecipes: data.numTotalRecipes
+							numTotalRecipes: data.numTotalRecipes,
+							page: "allrecipes"
 						});
 					}.bind(this),
 					error: function error(err) {
@@ -321,7 +384,7 @@
 		}, {
 			key: 'deleteRecipe',
 			value: function deleteRecipe(idRecipe) {
-				var _this5 = this;
+				var _this6 = this;
 
 				$.ajax({
 					url: "/recipes/delete",
@@ -333,21 +396,24 @@
 						if (err) {
 							console.error(err);
 						}
-						_this5.loadRecipesFromServer();
+						_this6.loadRecipesFromServer();
 					}.bind(this)
 				});
 			}
 		}, {
 			key: 'changePage',
 			value: function changePage(page) {
-				this.loadRecipesFromServer(0);
+				/*this.loadRecipesFromServer(0);
+	   this.setState({
+	   	page: page,
+	   	editRecipeMode: false,
+	   	seeRecipeMode: false,
+	   	recipeFocused: {},
+	   	idRecipeFocused: null,
+	   	recipeListPage: 0
+	   });*/
 				this.setState({
-					page: page,
-					editRecipeMode: false,
-					seeRecipeMode: false,
-					recipeFocused: {},
-					idRecipeFocused: null,
-					recipeListPage: 0
+					page: page
 				});
 			}
 		}, {
@@ -364,7 +430,7 @@
 		}, {
 			key: 'saveEditedRecipe',
 			value: function saveEditedRecipe(idRecipe, recipe) {
-				var _this6 = this;
+				var _this7 = this;
 
 				$.ajax({
 					url: 'recipes/edit',
@@ -376,7 +442,7 @@
 					},
 					success: function (data) {
 						console.log("Archivo Editado!");
-						_this6.setState({
+						_this7.setState({
 							page: "allrecipes",
 							recipes: data,
 							editRecipeMode: false,
@@ -389,7 +455,7 @@
 		}, {
 			key: 'saveRecipe',
 			value: function saveRecipe(recipe) {
-				var _this7 = this;
+				var _this8 = this;
 
 				$.ajax({
 					url: 'recipes/add',
@@ -398,7 +464,7 @@
 					data: recipe,
 					success: function (data) {
 						console.log("Archivo Subido!");
-						_this7.setState({
+						_this8.setState({
 							page: "allrecipes",
 							recipes: data,
 							editRecipeMode: false,
@@ -419,26 +485,37 @@
 		}, {
 			key: 'searchRecipes',
 			value: function searchRecipes(query) {
-				var _this8 = this;
-
 				console.log("searchig ", query);
-				$.ajax({
-					url: '/recipes/search',
-					dataType: 'json',
-					data: {
-						'query': query
-					},
-					success: function (data) {
-						console.log(data);
-						_this8.setState({
-							recipes: data,
-							numTotalRecipes: data.length
-						});
-					}.bind(this),
-					error: function error(err) {
-						console.error(err);
-					}
+				this.setState({
+					page: "allrecipes",
+					editRecipeMode: false,
+					seeRecipeMode: false,
+					recipeFocused: {},
+					idRecipeFocused: null,
+					recipeListPage: 0,
+					'query': query
 				});
+				this.loadRecipesFromServer(0, query);
+				/*$.ajax({
+	       url: '/recipes/search',
+	       dataType: 'json',
+	   	data: {
+	   		'query': query
+	   	},
+	       success: ((data) => {
+	   		console.log(data)
+	         this.setState({
+	           recipes: data,
+	   			numTotalRecipes: data.length,
+	   			page: "allrecipes",
+	   			startingRecipe: startingRecipe,
+	   			numRecipes: numRecipes
+	         });
+	       }).bind(this),
+	       error: (err) => {
+	         console.error(err);
+	       }
+	     });*/
 			}
 		}, {
 			key: 'render',
@@ -446,24 +523,35 @@
 				return _react2.default.createElement(
 					'div',
 					null,
-					_react2.default.createElement(MenuBar, { changePage: this.changePage.bind(this) }),
-					_react2.default.createElement(AppPage, {
-						page: this.state.page,
-						seeRecipe: this.seeRecipe.bind(this),
-						editRecipe: this.editRecipe.bind(this),
-						deleteRecipe: this.deleteRecipe.bind(this),
-						recipes: this.state.recipes,
-						editRecipeMode: this.state.editRecipeMode,
-						recipeFocused: this.state.recipeFocused,
-						idRecipeFocused: this.state.idRecipeFocused,
-						saveEditedRecipe: this.saveEditedRecipe.bind(this),
-						saveRecipe: this.saveRecipe.bind(this),
-						recipeListPage: this.state.recipeListPage,
-						numRecipesPerPage: this.state.numRecipesPerPage,
-						numTotalRecipes: this.state.numTotalRecipes,
-						changeRecipeListPage: this.changeRecipeListPage.bind(this),
-						searchRecipes: this.searchRecipes.bind(this)
-					})
+					_react2.default.createElement(
+						'div',
+						{ className: 'panel-head' },
+						_react2.default.createElement(NewMenuBar, {
+							changePage: this.changePage.bind(this),
+							searchRecipes: this.searchRecipes.bind(this)
+						})
+					),
+					_react2.default.createElement(
+						'div',
+						{ className: 'panel-bode' },
+						_react2.default.createElement(AppPage, {
+							page: this.state.page,
+							seeRecipe: this.seeRecipe.bind(this),
+							editRecipe: this.editRecipe.bind(this),
+							deleteRecipe: this.deleteRecipe.bind(this),
+							recipes: this.state.recipes,
+							editRecipeMode: this.state.editRecipeMode,
+							recipeFocused: this.state.recipeFocused,
+							idRecipeFocused: this.state.idRecipeFocused,
+							saveEditedRecipe: this.saveEditedRecipe.bind(this),
+							saveRecipe: this.saveRecipe.bind(this),
+							recipeListPage: this.state.recipeListPage,
+							numRecipesPerPage: this.state.numRecipesPerPage,
+							numTotalRecipes: this.state.numTotalRecipes,
+							changeRecipeListPage: this.changeRecipeListPage.bind(this),
+							searchRecipes: this.searchRecipes.bind(this)
+						})
+					)
 				);
 			}
 		}]);
@@ -22778,6 +22866,7 @@
 	    value: function render() {
 	      var _this3 = this;
 
+	      console.log("allreci", this.props.recipes);
 	      var recipesNames = this.props.recipes.map(function (recipe, index) {
 	        return _react2.default.createElement(
 	          'tr',
