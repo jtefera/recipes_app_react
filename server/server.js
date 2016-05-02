@@ -32,6 +32,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 //var routes = require("routes");
 
+var server_port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
+var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
 //Server
 var app = (0, _express2.default)();
 
@@ -209,9 +211,9 @@ app.post(PATHS.editRecipe, function (req, res) {
 	debug: true
 }));*/
 
-app.listen(3000, function () {
+app.listen(server_port, server_ip_address, function () {
 	console.log("dirname is " + __dirname);
 	console.log("----------------------------");
-	console.log("Server started on port 3000!");
+	console.log("Server started on" + server_ip_address + ":" + server_port);
 	console.log("----------------------------");
 });
