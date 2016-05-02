@@ -18,6 +18,8 @@ import SearchPage from './components/SearchPage'
 			Search recipesss
 */
 class MenuBar extends React.Component {
+	//Not being used.
+	//Second version of menubar
 	changePage(e) {
 		e.preventDefault();
 		this.props.changePage(e.target.value);
@@ -51,6 +53,42 @@ class MenuBar extends React.Component {
 							 </button>
 						 </li>
 				</ul>
+			</div>
+		);
+	}
+}
+
+class NewMenuBar extends React.Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			inputValue: ""
+		}
+	}
+	searchRecipes(e){
+		this.setState({
+			inputValue: e.target.value
+		})
+		this.props.searchRecipes(e.target.value);
+	}
+	addRecipe(e) {
+		e.preventDefault();
+		this.props.changePage("addrecipe");
+	}
+	render() {
+		return (
+			<div className="newmenubar">
+				<input className="input-lg"
+							 type="text"
+							 placeholder="search"
+							 onChange={this.searchRecipes.bind(this)}
+							 value={this.state.inputValue}
+				/><br />
+				<a 	href="#"
+						onClick={this.addRecipe.bind(this)}
+				>
+					Add recipe
+				</a>
 			</div>
 		);
 	}
@@ -135,28 +173,33 @@ class App extends React.Component {
 			idRecipeFocused: null,
 			recipeListPage: 0,
 			numRecipesPerPage: 10,
-			numTotalRecipes: 10
+			numTotalRecipes: 10,
+			query: ""
 		};
 	}
-	loadRecipesFromServer(pageNum){
+	loadRecipesFromServer(pageNum, searchQuery){
 		let page = (pageNum !== undefined)
 								? pageNum
 								:this.state.recipeListPage,
 
 		 		startingRecipe = page*this.state.numRecipesPerPage,
-				numRecipes = this.state.numRecipesPerPage;
-				console.log("ahsdaoksjdlad", page);
+				numRecipes = this.state.numRecipesPerPage,
+				query = searchQuery || this.state.query;
+				console.log("loading ", query);
     $.ajax({
-      url: '/recipes/get',
+      url: '/recipes/search',
       dataType: 'json',
 			data: {
 				startingRecipe: startingRecipe,
-				numRecipes: numRecipes
+				numRecipes: numRecipes,
+				query: query
 			},
       success: ((data) => {
+				//console.log(data);
         this.setState({
           recipes: data.recipes,
-					numTotalRecipes: data.numTotalRecipes
+					numTotalRecipes: data.numTotalRecipes,
+					page: "allrecipes"
         });
       }).bind(this),
       error: (err) => {
@@ -192,7 +235,7 @@ class App extends React.Component {
     })
   }
 	changePage(page) {
-		this.loadRecipesFromServer(0);
+		/*this.loadRecipesFromServer(0);
 		this.setState({
 			page: page,
 			editRecipeMode: false,
@@ -200,7 +243,10 @@ class App extends React.Component {
 			recipeFocused: {},
 			idRecipeFocused: null,
 			recipeListPage: 0
-		});
+		});*/
+		this.setState({
+			page: page
+		})
 	}
 	editRecipe(indexRecipe) {
 		let recipe = this.state.recipes[indexRecipe];
@@ -258,7 +304,17 @@ class App extends React.Component {
 	}
 	searchRecipes(query) {
 		console.log("searchig ", query);
-		$.ajax({
+		this.setState({
+			page: "allrecipes",
+			editRecipeMode: false,
+			seeRecipeMode: false,
+			recipeFocused: {},
+			idRecipeFocused: null,
+			recipeListPage: 0,
+			'query': query
+		});
+		this.loadRecipesFromServer(0, query);
+		/*$.ajax({
       url: '/recipes/search',
       dataType: 'json',
 			data: {
@@ -268,35 +324,45 @@ class App extends React.Component {
 				console.log(data)
         this.setState({
           recipes: data,
-					numTotalRecipes: data.length
+					numTotalRecipes: data.length,
+					page: "allrecipes",
+					startingRecipe: startingRecipe,
+					numRecipes: numRecipes
         });
       }).bind(this),
       error: (err) => {
         console.error(err);
       }
-    });
+    });*/
 	}
 	render() {
 		return (
 			<div>
-				<MenuBar changePage={this.changePage.bind(this)}/>
-				<AppPage
-					page={this.state.page}
-					seeRecipe={this.seeRecipe.bind(this)}
-					editRecipe={this.editRecipe.bind(this)}
-					deleteRecipe={this.deleteRecipe.bind(this)}
-					recipes={this.state.recipes}
-					editRecipeMode={this.state.editRecipeMode}
-					recipeFocused={this.state.recipeFocused}
-					idRecipeFocused={this.state.idRecipeFocused}
-					saveEditedRecipe={this.saveEditedRecipe.bind(this)}
-					saveRecipe={this.saveRecipe.bind(this)}
-					recipeListPage={this.state.recipeListPage}
-					numRecipesPerPage={this.state.numRecipesPerPage}
-					numTotalRecipes={this.state.numTotalRecipes}
-					changeRecipeListPage={this.changeRecipeListPage.bind(this)}
-					searchRecipes={this.searchRecipes.bind(this)}
-				/>
+				<div className="panel-head">
+					<NewMenuBar
+						changePage={this.changePage.bind(this)}
+						searchRecipes={this.searchRecipes.bind(this)}
+					/>
+				</div>
+				<div className="panel-bode">
+					<AppPage
+						page={this.state.page}
+						seeRecipe={this.seeRecipe.bind(this)}
+						editRecipe={this.editRecipe.bind(this)}
+						deleteRecipe={this.deleteRecipe.bind(this)}
+						recipes={this.state.recipes}
+						editRecipeMode={this.state.editRecipeMode}
+						recipeFocused={this.state.recipeFocused}
+						idRecipeFocused={this.state.idRecipeFocused}
+						saveEditedRecipe={this.saveEditedRecipe.bind(this)}
+						saveRecipe={this.saveRecipe.bind(this)}
+						recipeListPage={this.state.recipeListPage}
+						numRecipesPerPage={this.state.numRecipesPerPage}
+						numTotalRecipes={this.state.numTotalRecipes}
+						changeRecipeListPage={this.changeRecipeListPage.bind(this)}
+						searchRecipes={this.searchRecipes.bind(this)}
+					/>
+			</div>
 			</div>
 		);
 	}

@@ -70,7 +70,8 @@ app.get(PATHS.searchRecipes, (req, res) => {
 		if(err) {
 			console.error(err);
 		}
-		let query = req.query.query.toLowerCase().trim(),
+		let query = (req.query.query)?
+									req.query.query.toLowerCase().trim() : "",
 				searchWords = query.split(" "),
 				recipes = JSON.parse(data),
 				recipesSearched = recipes.reduce((arrRecipesByRelevance, recipe) => {
@@ -94,8 +95,26 @@ app.get(PATHS.searchRecipes, (req, res) => {
 					return recipeName.indexOf(query) !== -1;
 				});*/
 		//console.log(query, recipesSearched);
+		let numTotalRecipes = recipesSearched.length,
+				startingRecipe = Number(req.query.startingRecipe) || 0,
+				numRecipes = Number(req.query.numRecipes || numTotalRecipes);
 
-		res.json(recipesSearched);
+		if(startingRecipe > numTotalRecipes) {
+			res.send("The starting point is higher than the total number of recipes");
+		} else {
+			let endingRecipe = startingRecipe + numRecipes,
+					response = {
+						'numTotalRecipes': numTotalRecipes,
+						'nums': {
+							numRecipes,
+							endingRecipe,
+							startingRecipe
+						},
+						'recipes': recipesSearched.slice(startingRecipe, endingRecipe)
+					};
+					//console.log(req.query);
+			res.json(response);
+		}
 
 	});
 });

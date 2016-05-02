@@ -93,7 +93,7 @@ app.get(PATHS.searchRecipes, function (req, res) {
 		if (err) {
 			console.error(err);
 		}
-		var query = req.query.query.toLowerCase().trim(),
+		var query = req.query.query ? req.query.query.toLowerCase().trim() : "",
 		    searchWords = query.split(" "),
 		    recipes = JSON.parse(data),
 		    recipesSearched = recipes.reduce(function (arrRecipesByRelevance, recipe) {
@@ -115,8 +115,26 @@ app.get(PATHS.searchRecipes, function (req, res) {
   	return recipeName.indexOf(query) !== -1;
   });*/
 		//console.log(query, recipesSearched);
+		var numTotalRecipes = recipesSearched.length,
+		    startingRecipe = Number(req.query.startingRecipe) || 0,
+		    numRecipes = Number(req.query.numRecipes || numTotalRecipes);
 
-		res.json(recipesSearched);
+		if (startingRecipe > numTotalRecipes) {
+			res.send("The starting point is higher than the total number of recipes");
+		} else {
+			var endingRecipe = startingRecipe + numRecipes,
+			    response = {
+				'numTotalRecipes': numTotalRecipes,
+				'nums': {
+					numRecipes: numRecipes,
+					endingRecipe: endingRecipe,
+					startingRecipe: startingRecipe
+				},
+				'recipes': recipesSearched.slice(startingRecipe, endingRecipe)
+			};
+			//console.log(req.query);
+			res.json(response);
+		}
 	});
 });
 
