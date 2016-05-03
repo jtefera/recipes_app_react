@@ -9,8 +9,7 @@ import morgan from 'morgan'
 //var routes = require("routes");
 
 
-var server_port = process.env.OPENSHIFT_NODEJS_PORT || 8080;
-var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
+
 //Server
 let app = express();
 
@@ -193,6 +192,8 @@ app.post(PATHS.editRecipe, (req, res) => {
 	debug: true
 }));*/
 
+const server_port = process.env.OPENSHIFT_NODEJS_PORT || 3000;
+const server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
 
 app.listen(server_port, server_ip_address, () => {
 	console.log("dirname is " + __dirname);
