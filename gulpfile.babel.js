@@ -66,6 +66,11 @@ gulp.task('build', cb => {
   run('clean', 'babel', 'webpack', 'restart', cb);
 });
 
+gulp.task('buildOnly', cb => {
+  //Secuenof tasks
+  run('clean', 'babel', 'webpack', cb);
+});
+
 gulp.task('clean', cb => {
   //rimraf erases all files on the destination folder.
   //the destination contains the transpiled files

@@ -210,9 +210,9 @@ app.post(PATHS.editRecipe, function (req, res) {
 }));*/
 
 var server_port = process.env.OPENSHIFT_NODEJS_PORT || 3000;
-var server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
+//const server_ip_address = process.env.OPENSHIFT_NODEJS_IP || '127.0.0.1';
 
-app.listen(server_port, server_ip_address, function () {
+app.listen(server_port, function () {
 	console.log("dirname is " + __dirname);
 	console.log("----------------------------");
 	console.log("Server started on" + server_ip_address + ":" + server_port);
