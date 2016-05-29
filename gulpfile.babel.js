@@ -75,10 +75,12 @@ gulp.task('clean', cb => {
   //rimraf erases all files on the destination folder.
   //the destination contains the transpiled files
   //rimraf(paths.destination, cb);
-  return del([
+  let delVal = del([
     paths.destination
   ]);
-  if(cb) cb();
+  //console.log(cb)
+  //if(cb && (typeof cb === "function")) cb();
+  return delVal;
 });
 
 //not used right now. Is a module created by facebook to give
