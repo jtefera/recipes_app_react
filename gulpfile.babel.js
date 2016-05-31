@@ -71,7 +71,7 @@ gulp.task('buildOnly', cb => {
   run('clean', 'babel', 'webpack', cb);
 });
 
-gulp.task('clean', cb => {
+/*gulp.task('clean', cb => {
   //rimraf erases all files on the destination folder.
   //the destination contains the transpiled files
   //rimraf(paths.destination, cb);
@@ -81,6 +81,12 @@ gulp.task('clean', cb => {
   //console.log(cb)
   //if(cb && (typeof cb === "function")) cb();
   return delVal;
+});*/
+
+gulp.task("clean", cd => {
+  return shell.task([
+    'rm -r' + paths.destination
+  ])
 });
 
 //not used right now. Is a module created by facebook to give
