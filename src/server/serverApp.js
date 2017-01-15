@@ -17,31 +17,20 @@ let app = express();
 
 
 
-let publicFolder,
-		PATHS
+let publicFolder, PATHS;
 
-if(require.main === module){
-	//This app is being called as as a module
-	PATHS = {
-		recipejson: "./public/json/recipe_library.json",
-		deleteRecipe: "/recipes/delete",
-		addRecipe: "/recipes/add",
-		getRecipes: "/recipes/get",
-		editRecipe: "/recipes/edit",
-		searchRecipes: "/recipes/search"
-	};
-	publicFolder = "public"
-} else {
-	PATHS = {
-		recipejson: "./recipes_app_react/public/json/recipe_library.json",
-		deleteRecipe: "/delete",
-		addRecipe: "/add",
-		getRecipes: "	/get",
-		editRecipe: "/edit",
-		searchRecipes: "/search"
-	};
-	publicFolder = "recipes_app_react/public"
-}
+PATHS = {
+	recipejson: "./public/json/recipe_library.json",
+	deleteRecipe: "/recipes/delete",
+	addRecipe: "/recipes/add",
+	getRecipes: "/recipes/get",
+	editRecipe: "/recipes/edit",
+	searchRecipes: "/recipes/search",
+};
+publicFolder = "public"
+
+
+
 
 
 //logger

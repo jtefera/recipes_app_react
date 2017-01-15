@@ -1,0 +1,78 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Recipe Cookbook</title>
+
+	<!-- Bootstrap + jQuery -->
+	<script   src="https://code.jquery.com/jquery-1.12.3.min.js"   integrity="sha256-aaODHAgvwQW1bFOGXMeX+pC4PZIPsvn2h1sArYOhgXQ="   crossorigin="anonymous"></script>
+	<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+	<script type="text/javascript" src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+	<style >
+		#app {
+			text-align: center;
+		}
+		#app table{
+			width: 100%;
+		}
+		#content {
+			width: 400px;
+			margin: 40px auto;
+		}
+		table {
+			border-collapse: separate;
+			table-layout:fixed;
+		}
+		td {
+			margin-bottom: 15px;
+		}
+		.ingredientNameDiv {
+			text-align: left;
+		}
+		.ingredientNameDiv table{
+			width: 100%;
+			font-size: 14px;
+		}
+		.stepsList {
+			text-align: left;
+			font-size: 14px;
+		}
+		.Pagination button{
+			margin: 5px 20px;
+		}
+		.stepsList li {
+			list-style: none;
+			text-align: left;
+    		height: 25px;
+		}
+		li {
+			list-style: none;
+		}
+		.sortHandle {
+			display: inline-block;
+
+		}
+		.stepAllBtns {
+			float: right;
+		}
+		.btnActualPage {
+			font-weight: bold;
+		}
+		#app .panel-head {
+			padding: 30px 0px;
+	    border-bottom: 1px solid;
+	    margin-bottom: 14px;
+	    background-color: floralwhite;
+		}
+	</style>
+</head>
+<body>
+	<div id="content" class="container-fixed" >
+		<div class="">
+			<div id="app" class="panel panel-default"></div>
+		</div>
+	</div>
+	<script type="text/javascript" src="js/index.js"></script>
+</body>
+</html>
