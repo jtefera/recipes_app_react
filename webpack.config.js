@@ -1,4 +1,5 @@
 var CopyWebpackPlugin = require('copy-webpack-plugin');
+var webpack = require('webpack');
 module.exports = [{
         entry: {
             './public/js/index': './src/app/main.js',
@@ -24,6 +25,22 @@ module.exports = [{
                 from: '**/*',
                 to: 'public/',
             }]),
+            new webpack.optimize.UglifyJsPlugin({
+                output: {
+                    comments: false,
+                },
+                compress: {
+                    'warnings': false,
+                    'screw_ie8': true,
+                },
+            }),
+            new webpack.DefinePlugin({
+                'process.env': {
+                'NODE_ENV': JSON.stringify('production'),
+                },
+            }),
+            new webpack.optimize.DedupePlugin(),
+            new webpack.optimize.OccurenceOrderPlugin(true),
         ],
     },
     {

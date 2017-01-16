@@ -51,7 +51,7 @@
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	/* WEBPACK VAR INJECTION */(function(module) {"use strict";
 
 	var _http = __webpack_require__(3);
 
@@ -92,15 +92,29 @@
 	var publicFolder = void 0,
 	    PATHS = void 0;
 
-	PATHS = {
-		recipejson: "./public/json/recipe_library.json",
-		deleteRecipe: "/recipes/delete",
-		addRecipe: "/recipes/add",
-		getRecipes: "/recipes/get",
-		editRecipe: "/recipes/edit",
-		searchRecipes: "/recipes/search"
-	};
-	publicFolder = "public";
+	if (__webpack_require__.c[0] === module) {
+		//This app is being called from console
+		PATHS = {
+			recipejson: "./public/json/recipe_library.json",
+			deleteRecipe: "/recipes/delete",
+			addRecipe: "/recipes/add",
+			getRecipes: "/recipes/get",
+			editRecipe: "/recipes/edit",
+			searchRecipes: "/recipes/search"
+		};
+		publicFolder = "public";
+	} else {
+		// this is called from app.router in another server
+		PATHS = {
+			recipejson: "./src/projects/recipes_app_react/public/json/recipe_library.json",
+			deleteRecipe: "/delete",
+			addRecipe: "/add",
+			getRecipes: "	/get",
+			editRecipe: "/edit",
+			searchRecipes: "/search"
+		};
+		publicFolder = "./src/projects/recipes_app_react/public";
+	}
 
 	//logger
 
@@ -283,6 +297,7 @@
 
 	var _exports = module.exports = {};
 	_exports.app = app;
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)(module)))
 
 /***/ },
 /* 2 */
