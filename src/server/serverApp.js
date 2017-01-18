@@ -1,11 +1,11 @@
-
-import http from "http";
-import express from "express";
-import babel from "babel-middleware";
-import bodyParser from "body-parser";
-import fs from  'fs';
-import path from 'path'
-import morgan from 'morgan'
+'use strict';
+const http = require("http");
+const express = require("express");
+const babel = require("babel-middleware");
+const bodyParser = require("body-parser");
+const fs = require( 'fs');
+const path = require('path');
+const morgan = require('morgan');
 //var routes = require("routes");
 
 
@@ -36,13 +36,14 @@ if (require.main === module) {
 		recipejson: "./src/projects/recipes_app_react/public/json/recipe_library.json",
 		deleteRecipe: "/delete",
 		addRecipe: "/add",
-		getRecipes: "	/get",
+		getRecipes: "/get",
 		editRecipe: "/edit",
 		searchRecipes: "/search"
 	};
 	publicFolder = "./src/projects/recipes_app_react/public";
 }
 
+console.log('public folder is', publicFolder);
 
 
 

@@ -10,21 +10,34 @@ module.exports = [{
         },
         devtool: 'source-map',
         module: {
-            loaders: [{
-                test: /.jsx?$/,
-                loader: 'babel-loader',
-                exclude: /node_modules/,
-                query: {
-                    presets: ['es2015', 'react'],
+            loaders: [
+                {
+                    test: /.jsx?$/,
+                    loader: 'babel-loader',
+                    exclude: /node_modules/,
+                    query: {
+                        presets: ['es2015', 'react'],
+                    },
                 },
-            }],
+                {
+                    test: /\.json$/,
+                    loader: 'json-loader',
+                }
+            ],
         },
         plugins: [
-            new CopyWebpackPlugin([{
-                context: 'src/static/',
-                from: '**/*',
-                to: 'public/',
-            }]),
+            new CopyWebpackPlugin([
+                {
+                    context: 'src/static/',
+                    from: '**/*',
+                    to: 'public/',
+                },
+                {
+                    context: 'src/server/',
+                    from: '**/*',
+                    to: 'server/',
+                },
+            ]),
             new webpack.optimize.UglifyJsPlugin({
                 output: {
                     comments: false,
@@ -42,31 +55,5 @@ module.exports = [{
             new webpack.optimize.DedupePlugin(),
             new webpack.optimize.OccurenceOrderPlugin(true),
         ],
-    },
-    {
-        entry: {
-            './server/server': './src/server/server.js',
-            './server/serverApp': ['./src/server/serverApp.js'],
-        },
-        output: {
-            path: __dirname,
-            filename: '[name].js',
-        },
-        target: 'node',
-        module: {
-            loaders: [{
-                    test: /.js$/,
-                    loader: 'babel-loader',
-                    exclude: /node_modules/,
-                    query: {
-                        presets: ['es2015'],
-                    },
-                },
-                {
-                    test: /\.json$/,
-                    loader: 'json-loader',
-                },
-            ],
-        }
     }
 ];
