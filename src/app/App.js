@@ -187,7 +187,7 @@ class App extends React.Component {
 				query = searchQuery || this.state.query;
 				console.log("loading ", query);
     $.ajax({
-      url: '/recipes/search',
+      url: './search',
       dataType: 'json',
 			data: {
 				startingRecipe: startingRecipe,
@@ -221,7 +221,7 @@ class App extends React.Component {
 	}
 	deleteRecipe(idRecipe) {
     $.ajax({
-      url: "/recipes/delete",
+      url: "./delete",
       method: "POST",
       data: {
         'idRecipe': idRecipe
@@ -259,7 +259,7 @@ class App extends React.Component {
 	}
 	saveEditedRecipe(idRecipe, recipe) {
 		$.ajax({
-			url: 'recipes/edit',
+			url: './edit',
 			method: 'POST',
 			dataType: 'json',
 			data: {
@@ -280,7 +280,7 @@ class App extends React.Component {
 	}
 	saveRecipe(recipe) {
 		$.ajax({
-			url: 'recipes/add',
+			url: './add',
 			method: 'POST',
 			dataType: 'json',
 			data: recipe,
