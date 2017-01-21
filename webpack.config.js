@@ -31,12 +31,7 @@ module.exports = [{
                     context: 'src/static/',
                     from: '**/*',
                     to: 'public/',
-                },
-                {
-                    context: 'src/server/',
-                    from: '**/*',
-                    to: 'server/',
-                },
+                }
             ]),
             new webpack.optimize.UglifyJsPlugin({
                 output: {
