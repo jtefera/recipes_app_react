@@ -13,35 +13,15 @@ const morgan = require('morgan');
 //Server
 let app = express();
 
-
-
-
-
-let publicFolder, PATHS;
-
-if (require.main === module) {
-	//This app is being called from console
-	PATHS = {
-		recipejson: "./public/json/recipe_library.json",
-		deleteRecipe: "/recipes/delete",
-		addRecipe: "/recipes/add",
-		getRecipes: "/recipes/get",
-		editRecipe: "/recipes/edit",
-		searchRecipes: "/recipes/search"
-	};
-	publicFolder = "public";
-} else {
-	// this is called from app.router in another server
-	PATHS = {
-		recipejson: "./src/projects/recipes_app_react/public/json/recipe_library.json",
-		deleteRecipe: "/delete",
-		addRecipe: "/add",
-		getRecipes: "	/get",
-		editRecipe: "/edit",
-		searchRecipes: "/search"
-	};
-	publicFolder = "./src/projects/recipes_app_react/public";
-}
+const PATHS = {
+	recipejson: path.join(__dirname, "../public/json/recipe_library.json"),
+	deleteRecipe: /(recipes)?\/delete/,
+	addRecipe: /(recipes)?\/add/,
+	getRecipes: /(recipes)?\/get/,
+	editRecipe: /(recipes)?\/edit/,
+	searchRecipes: /(recipes)?\/search/
+};
+const publicFolder = path.join(__dirname, '../public');
 
 
 
@@ -49,7 +29,19 @@ if (require.main === module) {
 //logger
 
 app.use(function(req, res, next) {
-	console.log(req.url)
+	console.log("------------------------");
+	console.log("------------------------");
+	console.log("------------------------");
+	console.log("------------------------");
+	console.log("------------------------");
+	console.log(req.params);
+	console.log(req.url);
+	console.log(req.path);
+	console.log(req.route);
+	console.log("------------------------");
+	console.log("------------------------");
+	console.log("------------------------");
+	console.log("------------------------");
 	next();
 })
 app.use(morgan('combined'));
@@ -230,5 +222,4 @@ const server_port = process.env.OPENSHIFT_NODEJS_PORT || 8080	;
 	console.log("----------------------------");
 });*/
 
-var exports = module.exports = {};
-exports.app = app;
+var exports = module.exports = app;
